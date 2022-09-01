@@ -1,11 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from fastapi import Query
 from typing import List
 
 import core.settings as settings
 from core.gcp import gce
-
-settings = settings.Settings()
 
 #APIRouter creates path operations for chaos module
 router = APIRouter(

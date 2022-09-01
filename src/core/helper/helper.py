@@ -11,16 +11,3 @@ def Configure_Logging():
     client = google.cloud.logging.Client()
 
     client.setup_logging()
-
-## Helper functions
-def GetConfig():
-    # Function to Open config.json file and load values
-    try:
-        # Set Variables
-        settings.gcp_project = os.environ.get('GCP_PROJECT', '')
-        print(settings.gcp_project)
-    except Exception as e:
-        # Unable to load file, quit
-        logging.error(f"Problem loading environmental variables")
-        logging.error(e)
-        quit()

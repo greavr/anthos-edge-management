@@ -1,8 +1,7 @@
 from google.cloud import compute_v1
 import logging
 
-import core.settings as settings
-settings = settings.Settings()
+from core.settings import app_settings
 
 ## Disable Instance
 def stop_instance(instance_name: str, instance_zone: str) -> bool:
@@ -12,7 +11,7 @@ def stop_instance(instance_name: str, instance_zone: str) -> bool:
     try:
         # Stop Instance
         current_machine = compute_client.stop(
-            project = settings.gcp_project,
+            project = app_settings.gcp_project,
             instance = instance_name,
             zone = instance_zone
         )
@@ -31,7 +30,7 @@ def start_instance(instance_name: str, instance_zone: str) -> bool:
     try:
         # Stop Instance
         current_machine = compute_client.start(
-            project = settings.gcp_project,
+            project = app_settings.gcp_project,
             instance = instance_name,
             zone = instance_zone
         )

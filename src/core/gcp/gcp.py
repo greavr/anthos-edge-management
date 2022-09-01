@@ -3,10 +3,8 @@ import cachetools.func
 import logging
 from typing import List
 
-import core.settings as settings
+from core.settings import app_settings
 from models.abm import Abm
-
-settings = settings.Settings()
 
 ## List Anthos GKE Clusters
 @cachetools.func.ttl_cache(maxsize=128, ttl=5)
@@ -23,7 +21,7 @@ def get_abm_list() -> List[Abm]:
 
         # Initialize request argument(s)
         request = gkehub_v1.ListMembershipsRequest(
-            parent=f"projects/{settings.gcp_project}/locations/-",
+            parent=f"projects/{app_settings.gcp_project}/locations/-",
         )
 
         # Make the request
