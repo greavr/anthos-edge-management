@@ -1,10 +1,11 @@
 from fastapi import APIRouter
 from typing import List
 
-from core.gcp import gcp, logging
+from core.gcp import gcp, logging, gce
 from models.abm import Abm
 from models.logs import abm_log_item
 from models.urls import abm_url_list
+from models.abm_node import AbmNode
 
 
 #APIRouter creates path operations for abm module
@@ -28,3 +29,8 @@ async def cluster_details(cluster_name: str, row_count: int = 100):
 @router.get("/urls/{cluster_name}", response_model=abm_url_list)
 async def cluster_details(cluster_name: str):
     return {}
+
+@router.get("/nodes/", response_model=List[AbmNode])
+async def node_list(cluster_name: str, location:str):
+    """ Return details of nodes in the cluster """
+    return gce.get_instance_list(cluster_name=cluster_name, location=location)
