@@ -64,7 +64,9 @@ def acm_status(cluser_name: str = "*") -> List[Abm]:
             for aCluster in cluster_list:
                 if aCluster.name == cluster_name:
                     aCluster.acm_status = status
-                    aCluster.acm_update_time = last_update
+                    # Validate Last Sync was
+                    if last_update:
+                        aCluster.acm_update_time = last_update
 
     except Exception as e:
         logging.error(e)
