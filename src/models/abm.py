@@ -10,8 +10,11 @@ class Abm(BaseModel):
     node_count: int
     vcpu_count: int
     memory_mb: int
+    cluster_state: str
     update_time: datetime
     labels: Optional[dict]
+    acm_status: Optional[str]
+    acm_update_time: Optional[datetime]
 
     def __repr__(self):
         return f"""name: {self.name}, 
@@ -20,5 +23,8 @@ class Abm(BaseModel):
                 node_count: {self.node_count}, 
                 vcpu_count: {self.vcpu_count}, 
                 memory_mb: {self.memory_mb}, 
+                cluster_state: {self.cluster_state},
                 update_time: {self.update_time}, 
-                labels: {self.labels}"""
+                labels: {self.labels},
+                acm_status: {self.acm_status},
+                acm_update_time: {self.acm_update_time}"""

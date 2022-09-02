@@ -44,11 +44,13 @@ def get_abm_list() -> List[Abm]:
                 node_count = response.endpoint.kubernetes_metadata.node_count,
                 vcpu_count = response.endpoint.kubernetes_metadata.vcpu_count,
                 memory_mb = response.endpoint.kubernetes_metadata.memory_mb,
+                cluster_state = str(response.state.code).split(".")[-1],
                 update_time = response.endpoint.kubernetes_metadata.update_time,
                 labels = response.labels
             )
 
             
+
             logging.info(thisAbm)
             abm_list.append(thisAbm)
 

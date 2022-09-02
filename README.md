@@ -25,6 +25,7 @@ deactivate
 ## Environment Variables ##
 The following environment variables can be set:
   - **GCP_PROJECT** - Name of the target GCP
+  - **SOURCE_REPO** - URL to the REPO for ACM Git
 
 # Org Policy:
 - **iam.allowedPolicyMemberDomains** - Set To ***All***

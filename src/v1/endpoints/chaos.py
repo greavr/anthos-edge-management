@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 
 import core.settings as settings
-from core.gcp import gce
+from core.gcp import gce, network
 
 #APIRouter creates path operations for chaos module
 router = APIRouter(
@@ -59,3 +59,52 @@ async def enable_node(node_zone: str, node_name: str):
         raise HTTPException(status_code=500, detail=f"Unable to enable node: {node_name} in the zone: {node_zone}")
     else:
         return {"node_name" : node_name, "node_zone": node_zone, "status": "starting"}
+
+@router.post("/disable_cluster/", responses={
+    200: {
+        "description": "Cluster Taken Offline",
+        "content": {
+            "application/json": {
+                "example": [
+                    {
+                        "cluster_name": "abm1",
+                        "location": "us-west1",
+                        "status": "offline"
+                    }
+                ]
+            }
+        }
+    },
+    500: {"description": "Unable to disable cluster: CLUSTER_NAME in the location: CLUSTER_LOCATION"}
+})
+async def disable_node(cluster_name: str, location: str):
+    """ Disable the cluster """
+    if not network.disable_network(cluster=cluster_name, location=location):
+        raise HTTPException(status_code=500, detail=f"Unable to disable cluster: {cluster_name} in the location: {location}")
+    else:
+        return {"cluster_name" : cluster_name, "location": location, "status": "offline"}
+
+@router.post("/enable_cluster/", responses={
+    200: {
+        "description": "Cluster Back Online",
+        "content": {
+            "application/json": {
+                "example": [
+                    {
+                        "cluster_name": "abm1",
+                        "location": "us-west1",
+                        "status": "online"
+                    }
+                ]
+            }
+        }
+    },
+    500: {"description": "Unable to enable cluster: CLUSTER_NAME"}
+})
+async def disable_node(cluster_name: str):
+    """ Enable the clsuter """
+    if not network.enable_network(cluster=cluster_name):
+        raise HTTPException(status_code=500, detail=f"Unable to disable cluster: {cluster_name} ")
+    else:
+        return {"cluster_name" : cluster_name, "status": "online"}
+
