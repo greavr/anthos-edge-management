@@ -7,7 +7,7 @@ from google.cloud import gkehub_v1
 
 from core.settings import app_settings
 from models.abm import Abm
-from core.gcp import gcp
+from core.gcp import file_manager, gcp
 
 @cachetools.func.ttl_cache(maxsize=128, ttl=5)
 def get_source_repo() -> List[str]:
@@ -50,6 +50,8 @@ def acm_status(cluser_name: str = "*") -> List[Abm]:
             ## https://cloud.google.com/python/docs/reference/gkehub/latest/google.cloud.gkehub_v1.types.FeatureState
             if status_code == 5:
                 status = "NOT_INSTALLED"
+            elif status_code == 3:
+                status = "ERROR"
             elif status_code == 1:
                 status = "SYNCED"
             else:
@@ -73,3 +75,22 @@ def acm_status(cluser_name: str = "*") -> List[Abm]:
         print(e)
 
     return cluster_list
+
+def build_repo(push_to_git: bool = False) -> bool:
+    """ This function creates a set of cluster registrys for entrys found in the ACM list"""
+
+    result = False
+
+    abm_list = gcp.get_abm_list()
+
+    # For each cluster create cluster registry file
+    for aCluster in abm_list:
+        this_cluster_file = file_manager.rebuild_clusters(cluster_name=aCluster.name, cluster_labels=aCluster.labels)
+        logging.debug(this_cluster_file)
+        print(this_cluster_file)
+        
+    
+    # Done Adding files
+    result = True
+
+    return result

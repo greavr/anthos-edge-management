@@ -77,7 +77,7 @@ async def enable_node(node_zone: str, node_name: str):
     },
     500: {"description": "Unable to disable cluster: CLUSTER_NAME in the location: CLUSTER_LOCATION"}
 })
-async def disable_node(cluster_name: str, location: str):
+async def disable_cluster(cluster_name: str, location: str):
     """ Disable the cluster """
     if not network.disable_network(cluster=cluster_name, location=location):
         raise HTTPException(status_code=500, detail=f"Unable to disable cluster: {cluster_name} in the location: {location}")
@@ -101,8 +101,8 @@ async def disable_node(cluster_name: str, location: str):
     },
     500: {"description": "Unable to enable cluster: CLUSTER_NAME"}
 })
-async def disable_node(cluster_name: str):
-    """ Enable the clsuter """
+async def enable_cluster(cluster_name: str):
+    """ Enable the cluster """
     if not network.enable_network(cluster=cluster_name):
         raise HTTPException(status_code=500, detail=f"Unable to disable cluster: {cluster_name} ")
     else:

@@ -1,4 +1,6 @@
+import hashlib
 from google.cloud import gkehub_v1
+from google.cloud import secretmanager
 import cachetools.func
 import logging
 from typing import List
@@ -60,3 +62,65 @@ def get_abm_list() -> List[Abm]:
         print(e)
 
     return abm_list
+
+def set_secret_value(secret_name: str, secret_value: str) -> bool:
+    """ This function updates the secret in the vault and updates the app_settings"""
+
+    result = False
+
+    # Try to create the secret
+    try:
+
+        # Now update the secret
+        client = secretmanager.SecretManagerServiceClient()
+
+        # Build the resource name of the parent project.
+        parent = f"projects/{app_settings.gcp_project}"
+
+        # Build a dict of settings for the secret
+        secret = {'replication': {'automatic': {}}}
+        # Create the secret
+        client.create_secret(secret_id=secret_name, parent=parent, secret=secret)
+    except Exception as e:
+        logging.error(e)
+        print(e)
+
+    # Next try to add secret
+    try:
+
+        # Now create the value
+        parent = f"projects/{app_settings.gcp_project}/secrets/{secret_name}"
+        secret_value = secret_value.encode('UTF-8')
+        client.add_secret_version(parent=parent, payload={'data': secret_value})
+        result = True
+
+    except Exception as e:
+        logging.error(e)
+        print(e)
+
+    # Return the decoded payload.
+    return result
+
+@cachetools.func.ttl_cache(maxsize=128, ttl=5)
+def get_secret_value(secret_name: str) -> str:
+    """ This function looksup the secret in secret manager (if exists)""" 
+
+    result = ""
+    try:
+        client = secretmanager.SecretManagerServiceClient()
+
+        # Build the resource name of the secret version.
+        name = f"projects/{app_settings.gcp_project}/secrets/{secret_name}/versions/latest"
+
+        # Access the secret version.
+        response = client.access_secret_version(name=name)
+        result = response.payload.data.decode('UTF-8')
+    
+    except Exception as e:
+        logging.error(e)
+        print(e)
+
+    # Return the decoded payload.
+    return result
+
+

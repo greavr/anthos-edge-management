@@ -17,3 +17,5 @@ websockets==10.3
 google-cloud-gke-hub==1.5.0
 google-cloud-logging==3.2.1
 google-cloud-compute==1.5.1
+PyGithub==1.55
+google-cloud-secret-manager==2.10.0
