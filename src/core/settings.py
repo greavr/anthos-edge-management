@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     source_repo: str = os.environ.get('SOURCE_REPO', '')
     save_file_directory: str = os.environ.get('SAVE_PATH',save_path)
     git_token: str = os.environ.get('GIT_TOKEN','')
+    copy_from_repo: str = os.environ.get('COPY_FROM_REPO','greavr/anthos-edge-workloads')
 
     def lookup_values(self):
 

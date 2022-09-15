@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 
-from core.gcp import acm
+from core.gcp import acm, git
 from models.abm import Abm
 from core.settings import app_settings
 
@@ -36,26 +36,3 @@ async def get_acm_repo():
         raise HTTPException(status_code=500, detail=f"Unable to find ACM repo in the project: {app_settings.gcp_project}")
     else:
         return {"url": result, }
-
-
-@router.post("/rebuild", responses={
-    200: {
-        "description": "Rebuild Repo",
-        "content": {
-            "application/json": {
-                "status": "success"
-            }
-        }
-    },
-    500: {"description": "Unable refresh repo"}
-})
-async def rebuild_repo(should_execute: bool):
-    """ This function rebuilds the git repo with cluster info fround in ABM"""
-    if should_execute:
-        result = acm.build_repo()
-        if not result:
-            raise HTTPException(status_code=500, detail=f"Unable refresh repo")
-        else:
-            return {"status": "success", }
-    else:
-        raise HTTPException(status_code=500, detail=f"Did not confirm")

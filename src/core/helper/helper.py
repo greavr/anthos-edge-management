@@ -4,10 +4,12 @@ import logging
 import sys
 
 import google.cloud.logging
+from google.cloud.logging.handlers import CloudLoggingHandler, setup_logging
 
 def Configure_Logging():
     """ Function to build logging"""
-
+    #logging.basicConfig(level=logging.DEBUG)
     client = google.cloud.logging.Client()
-
-    client.setup_logging()
+    handler = CloudLoggingHandler(client)
+    logging.getLogger().setLevel(logging.DEBUG)
+    setup_logging(handler)

@@ -6,6 +6,7 @@ import cachetools.func
 from google.cloud import gkehub_v1
 
 from core.settings import app_settings
+from models import abm
 from models.abm import Abm
 from core.gcp import file_manager, gcp
 
@@ -76,21 +77,24 @@ def acm_status(cluser_name: str = "*") -> List[Abm]:
 
     return cluster_list
 
-def build_repo(push_to_git: bool = False) -> bool:
+def build_repo() -> bool:
     """ This function creates a set of cluster registrys for entrys found in the ACM list"""
 
     result = False
+    try:
+        abm_list = gcp.get_abm_list()
 
-    abm_list = gcp.get_abm_list()
+        # For each cluster create cluster registry file
 
-    # For each cluster create cluster registry file
-    for aCluster in abm_list:
-        this_cluster_file = file_manager.rebuild_clusters(cluster_name=aCluster.name, cluster_labels=aCluster.labels)
+        this_cluster_file = file_manager.rebuild_clusters(cluster_list=abm_list)
         logging.debug(this_cluster_file)
         print(this_cluster_file)
         
-    
-    # Done Adding files
-    result = True
+        # Done Adding files
+        result = True
+    except Exception as e:
+        logging.error(e)
+        print(e)
 
     return result
+

@@ -1,5 +1,6 @@
 import logging
 from typing import List
+from pathlib import Path
 from github import Github
 from urllib.parse import urlparse
 
@@ -28,6 +29,7 @@ def get_branches(repo_name: str):
 def add_file_to_branch(file_list: List[str]) -> list[str]:
     """ This function writes files to the git repo (Sadly one at a time)"""
     uploaded_files = []
+
     try:
         g = Github(app_settings.git_token)
 
@@ -39,14 +41,18 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
 
         for afile in file_list:
             try:
-                file_name = f"{afile.rsplit('/')[-2]}/{afile.rsplit('/')[-1]}"
-                logging.debug(f"Reading file: {file_name}")
+                file_name_raw = Path(afile).parts
+                file_name = str(Path(*file_name_raw[file_name_raw.index("files")+1:]))
+
                 #open text file in read mode
                 with open(afile, 'r') as f:
                     filecontents = f.read()
-                repo.create_file(file_name, f"Adding: {file_name}", str(filecontents) , branch="main")
+
+                logging.debug(f"Adding file: on-disk-file: {afile}, git-path: {file_name}, contents: {filecontents[0:10]}..")
+                repo.create_file(path=file_name, content=filecontents, message=f"Adding: {file_name}", branch="main")
                 uploaded_files.append(file_name)
-            except Exception as e:
+
+            except Github.GithubException.GithubException as e:
                 logging.error(e)
                 print(e)
 
@@ -55,3 +61,47 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
         print(e)
 
     return uploaded_files
+
+def get_file_contents() -> dict[str,str]:
+    """ This function returns a list of files and their contents from the repo"""
+
+    file_list = {}
+    g = Github(app_settings.git_token)
+    repo = g.get_repo(app_settings.copy_from_repo)
+    contents = repo.get_contents("")
+    while contents:
+        file_content = contents.pop(0)
+        if file_content.type == "dir":
+            contents.extend(repo.get_contents(file_content.path))
+        else:
+            file_list[file_content.path] = file_content.decoded_content.decode('utf-8')
+    
+    return file_list
+
+def delete_repo_file(target_file: str = "") -> bool:
+    """ This function removes a specific file from the repo """
+    result = False
+    try:
+        # Remove the files
+        g = Github(app_settings.git_token)
+        repo = g.get_repo(urlparse(app_settings.source_repo).path[1:])
+
+        contents = repo.get_contents(target_file)
+        print(contents)
+        while contents:
+            file_content = contents.pop(0)
+            print(f"removing file: {file_content.name}")
+
+            # Ignore folder
+            if file_content.type == "dir":
+                contents.extend(repo.get_contents(file_content.path))
+            else:
+                # Delete file
+                repo.delete_file(file_content.path ,f"Removing: {file_content.name}", file_content.sha, branch="main")
+
+        result = True
+    except Exception as e:
+        logging.error(e)
+        print(e)
+
+    return result

@@ -29,6 +29,7 @@ The following environment variables can be set:
   - **GCP_PROJECT** - Name of the target GCP
   - **SOURCE_REPO** - URL to the REPO for ACM Git
   - **GIT_TOKEN** - Git Hub Token [Github Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+  - **COPY_FROM_REPO** - Source repo with sample workloasd [github.com/greavr/anthos-edge-workloads](https://github.com/greavr/anthos-edge-workloads)
   - **SAVE_PATH** - Local save path (has a default value)
 
 # Org Policy:
