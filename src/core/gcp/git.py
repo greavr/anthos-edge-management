@@ -30,6 +30,8 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
     """ This function writes files to the git repo (Sadly one at a time)"""
     uploaded_files = []
 
+    clean_list = [*set(file_list)]
+    logging.info(clean_list)
     try:
         g = Github(app_settings.git_token)
 
@@ -39,7 +41,7 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
 
         repo = g.get_repo(repo_name)
 
-        for afile in file_list:
+        for afile in clean_list:
             try:
                 file_name_raw = Path(afile).parts
                 file_name = str(Path(*file_name_raw[file_name_raw.index("files")+1:]))
@@ -52,7 +54,7 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
                 repo.create_file(path=file_name, content=filecontents, message=f"Adding: {file_name}", branch="main")
                 uploaded_files.append(file_name)
 
-            except Github.GithubException.GithubException as e:
+            except Exception as e:
                 logging.error(e)
                 print(e)
 
