@@ -26,6 +26,29 @@ def get_branches(repo_name: str):
         print(branch)
         print(branch.name)
 
+def check_file(file_path: str) -> str:
+    """ This functino checks if the file exists in git, if so returns the SHA"""
+
+    result = None
+    try:
+        g = Github(app_settings.git_token)
+
+        repo_name = urlparse(app_settings.source_repo).path[1:]
+        logging.debug(f"Repo name: {repo_name}")
+
+        repo = g.get_repo(repo_name)
+
+        contents = repo.get_contents(file_path)
+
+        result = contents.sha
+
+    except Exception as e:
+                logging.error(e)
+                print(e)
+
+    return result
+    
+
 def add_file_to_branch(file_list: List[str]) -> list[str]:
     """ This function writes files to the git repo (Sadly one at a time)"""
     uploaded_files = []
@@ -50,8 +73,15 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
                 with open(afile, 'r') as f:
                     filecontents = f.read()
 
-                logging.debug(f"Adding file: on-disk-file: {afile}, git-path: {file_name}, contents: {filecontents[0:10]}..")
-                repo.create_file(path=file_name, content=filecontents, message=f"Adding: {file_name}", branch="main")
+                # Check file is on repo
+                file_exist_sha = check_file(file_path=file_name)
+
+                if file_exist_sha:
+                    logging.debug(f"Updating file in repo file: on-disk-file: {afile}, git-path: {file_name}, contents: {filecontents[0:10]}..")
+                    repo.update_file(path=file_name, sha=file_exist_sha, content=filecontents, message=f"Adding: {file_name}", branch="main")
+                else:
+                    logging.debug(f"Adding file: on-disk-file: {afile}, git-path: {file_name}, contents: {filecontents[0:10]}..")
+                    repo.create_file(path=file_name, content=filecontents, message=f"Adding: {file_name}", branch="main")
                 uploaded_files.append(file_name)
 
             except Exception as e:
