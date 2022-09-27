@@ -122,7 +122,7 @@ def create_repo_sync(cluster_name: str, selector_name: str ):
             "git": {
                 "repo": f"{app_settings.source_repo}.git",
                 "branch": "main",
-                "dir": "/{cluster_name}",
+                "dir": f"/{cluster_name}",
                 "auth": "none"
             }
         }

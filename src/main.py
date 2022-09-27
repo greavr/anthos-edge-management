@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core.helper import helper
 from v1.api import router as api_router
+from testing.api import router as testing_router
 
 from core.settings import app_settings
 import uvicorn
@@ -21,6 +22,7 @@ app.add_middleware(
 
 # Include Routes
 app.include_router(api_router)
+app.include_router(testing_router)
 
 @app.get("/")
 async def root():
