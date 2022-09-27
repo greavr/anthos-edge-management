@@ -15,7 +15,7 @@ from models.abm_node import AbmNode
 #APIRouter creates path operations for abm module
 router = APIRouter(
     prefix="/testing/abm",
-    tags=["testing","abm"],
+    tags=["testing"],
     responses={404: {"description": "Not found"}},
 )
 

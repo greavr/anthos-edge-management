@@ -5,7 +5,7 @@ from core.gcp import gcp, acm, git
 #APIRouter creates path operations for abm module
 router = APIRouter(
     prefix="/testing/settings",
-    tags=["testing","settings"],
+    tags=["testing"],
     responses={404: {"description": "Not found"}},
 )
 
