@@ -5,6 +5,7 @@ save_path = 'src/core/gcp/files/'
 
 class Settings(BaseSettings):
     app_name: str = "Anthos Edge API"
+    region_file: str = "src/core/helper/locations.csv"
     gcp_project: str = os.getenv('GCP_PROJECT')
     source_repo: str = os.environ.get('SOURCE_REPO', '')
     save_file_directory: str = os.environ.get('SAVE_PATH',save_path)

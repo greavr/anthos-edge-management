@@ -3,10 +3,13 @@ import random
 from fastapi import APIRouter
 from typing import List
 
+from core.helper import helper
+
 from models.abm import Abm
 from models.logs import abm_log_item
 from models.urls import abm_url_list
 from models.abm_node import AbmNode
+
 
 
 #APIRouter creates path operations for abm module
@@ -35,6 +38,7 @@ async def list_of_abm_clusters():
             update_time=datetime.now(),
             acm_status="Ready",
             acm_update_time=datetime.now(),
+            lat_long = helper.lookup_location(gcp_region=a_region),
             labels={
                 "state" : random.choice(["AL","MT","AK","NE","AZ","NV","AR","NH","CA","NJ","CO","NM","CT","NY","DE","NC","FL","ND","GA","OH","HI","OK","ID","OR","IL","PA","IN","RI","IA","SC","KS","SD","KY","TN","LA","TX","ME","UT","MD","VT","MA","VA","MI","WA","MN","WV","MS","WI","MO","WY"]),
                 "canary" : random.choice(["100","50","25","10"]),

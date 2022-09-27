@@ -6,6 +6,7 @@ import logging
 from typing import List
 
 from core.settings import app_settings
+from core.helper import helper
 from models.abm import Abm
 
 ## List Anthos GKE Clusters
@@ -48,6 +49,7 @@ def get_abm_list() -> List[Abm]:
                 memory_mb = response.endpoint.kubernetes_metadata.memory_mb,
                 cluster_state = str(response.state.code).split(".")[-1],
                 update_time = response.endpoint.kubernetes_metadata.update_time,
+                lat_long = helper.lookup_location(gcp_region=this_location),
                 labels = response.labels
             )
 

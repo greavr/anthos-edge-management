@@ -12,6 +12,7 @@ class Abm(BaseModel):
     memory_mb: int
     cluster_state: str
     update_time: datetime
+    lat_long: dict
     labels: Optional[dict]
     acm_status: Optional[str]
     acm_update_time: Optional[datetime]
@@ -25,6 +26,7 @@ class Abm(BaseModel):
                 memory_mb: {self.memory_mb}, 
                 cluster_state: {self.cluster_state},
                 update_time: {self.update_time}, 
+                lat_long: {self.lat_long},
                 labels: {self.labels},
                 acm_status: {self.acm_status},
                 acm_update_time: {self.acm_update_time}"""
