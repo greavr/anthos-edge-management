@@ -23,7 +23,7 @@ router = APIRouter(
     500: {"description": "Unable to find ACM repo"}
 })
 async def get_acm_repo():
-    """ Function returns url to the Git Repo : TESTING - ALWAYS SUCESS """
+    """ Function returns url to the Git Repo : TESTING - ALWAYS SUCCESS """
     result = "https://github.com/greavr"
     if not result:
         raise HTTPException(status_code=500, detail=f"Unable to find ACM repo in the project: {app_settings.gcp_project}")

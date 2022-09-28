@@ -27,7 +27,7 @@ router = APIRouter(
     500: {"description": "Unable to disable node: NODE_NAME in the zone: NODE_ZONE"}
 })
 async def disable_node(node_zone: str, node_name: str):
-    """ Disable the node: TESTING - ALWAYS SUCESS """
+    """ Disable the node: TESTING - ALWAYS SUCCESS """
     return {"node_name" : node_name, "node_zone": node_zone, "status": "stopping"}
 
 @router.post("/startnode/", responses={
@@ -48,7 +48,7 @@ async def disable_node(node_zone: str, node_name: str):
     500: {"description": "Unable to enable node: NODE_NAME in the zone: NODE_ZONE"}
 })
 async def enable_node(node_zone: str, node_name: str):
-    """ Enable the node: TESTING - ALWAYS SUCESS """
+    """ Enable the node: TESTING - ALWAYS SUCCESS """
     return {"node_name" : node_name, "node_zone": node_zone, "status": "starting"}
 
 @router.post("/disable_cluster/", responses={
@@ -69,7 +69,7 @@ async def enable_node(node_zone: str, node_name: str):
     500: {"description": "Unable to disable cluster: CLUSTER_NAME in the location: CLUSTER_LOCATION"}
 })
 async def disable_cluster(cluster_name: str, location: str):
-    """ Disable the cluster : TESTING - ALWAYS SUCESS"""
+    """ Disable the cluster : TESTING - ALWAYS SUCCESS"""
     return {"cluster_name" : cluster_name, "location": location, "status": "offline"}
 
 @router.post("/enable_cluster/", responses={
@@ -90,6 +90,6 @@ async def disable_cluster(cluster_name: str, location: str):
     500: {"description": "Unable to enable cluster: CLUSTER_NAME"}
 })
 async def enable_cluster(cluster_name: str):
-    """ Enable the cluster : TESTING - ALWAYS SUCESS """
+    """ Enable the cluster : TESTING - ALWAYS SUCCESS """
     return {"cluster_name" : cluster_name, "status": "online"}
 

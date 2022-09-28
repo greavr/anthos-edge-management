@@ -71,7 +71,7 @@ async def set_git_token(token_value: str):
     500: {"description": "Unable To Update repo Url"}
 })
 async def set_repo_url(repo_url: str):
-    """ Updates the git token, and stores it in the secrets vault : TESTING - ALWAYS SUCESS """
+    """ Updates the git token, and stores it in the secrets vault : TESTING - ALWAYS SUCCESS """
     return {"status":"success"}
 
 @router.post("/rebuild", responses={
@@ -86,7 +86,7 @@ async def set_repo_url(repo_url: str):
     500: {"description": "Unable refresh repo"}
 })
 async def rebuild_repo(should_execute: bool):
-    """ This function rebuilds the git repo with cluster info fround in ABM : TESTING - ALWAYS SUCESS """
+    """ This function rebuilds the git repo with cluster info fround in ABM : TESTING - ALWAYS SUCCESS """
     return {"status": "success", }
 
 
@@ -103,6 +103,6 @@ async def rebuild_repo(should_execute: bool):
     500: {"description": "Unable delete repo file"}
 })
 async def delete_repo_file(file_to_remove: str = ""):
-    """ This function deletes either a file, or all the files in the entire repo : TESTING - ALWAYS SUCESS"""
+    """ This function deletes either a file, or all the files in the entire repo : TESTING - ALWAYS SUCCESS"""
     raise HTTPException(status_code=500, detail=f"Unable delete repo file")
 

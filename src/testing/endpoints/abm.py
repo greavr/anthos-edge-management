@@ -21,7 +21,7 @@ router = APIRouter(
 
 @router.get("/", response_model=List[Abm])
 async def list_of_abm_clusters():
-    """ Function returns list of Anthos Baremetal Clusters in the project: TESTING - ALWAYS SUCESS """  
+    """ Function returns list of Anthos Baremetal Clusters in the project: TESTING - ALWAYS SUCCESS """  
     canned_values = []
     gcp_regions = ["asia-east1","asia-east2","asia-northeast1","asia-northeast2","asia-northeast3","asia-south1","asia-south2","asia-southeast1","asia-southeast2","australia-southeast1","australia-southeast2","europeentral2","europe-north1","europe-southwest1","europe-west1-d","europe-west2","europe-west3","europe-west4","europe-west6","europe-west8","europe-west9","northamerica-northeast1","northamerica-northeast2","southamerica-east1","southamerica-west1","usentral1","us-east1-d","us-east4","us-east5","us-south1","us-west1","us-west2","us-west3","us-west4"]
 
@@ -53,7 +53,7 @@ async def list_of_abm_clusters():
 
 @router.get("/logs/{cluster_name}", response_model=List[abm_log_item])
 async def cluster_details(cluster_name: str, row_count: int = 100):
-    """ Get a list of logs from the ABM Cluster : TESTING - ALWAYS SUCESS"""  
+    """ Get a list of logs from the ABM Cluster : TESTING - ALWAYS SUCCESS"""  
     canned_values = []
 
     for log_num in range(100):
@@ -76,7 +76,7 @@ async def cluster_details(cluster_name: str):
 
 @router.get("/nodes/", response_model=List[AbmNode])
 async def node_list(cluster_name: str, location:str):
-    """ Return details of nodes in the cluster : TESTING - ALWAYS SUCESS"""  
+    """ Return details of nodes in the cluster : TESTING - ALWAYS SUCCESS"""  
     canned_values = [
         {"name": "abm-master-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.9","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101184"},
         {"name": "abm-worker-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.11","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101379"},
