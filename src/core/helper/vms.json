@@ -1,0 +1,70 @@
+{
+    "parameters" : [
+        {
+            "name" : "windows_10_a",
+            "vm_machine" : "Windows_10",
+            "values" : {
+                "name" : "machine_a",
+                "startup_script" : "/run-a.ps1",
+                "default_user" : "admin",
+                "default_user_pwd" : "pwd"
+            }
+        },
+        {
+            "name" : "windows_10_b",
+            "vm_machine" : "Windows_10",
+            "values" : {
+                "name" : "machine_b",
+                "startup_script" : "/run-b.ps1",
+                "default_user" : "admin",
+                "default_user_pwd" : "pwdpwd"
+            }
+        },
+        {
+            "name" : "windows_10_c",
+            "vm_machine" : "Windows_10",
+            "values" : {
+                "name" : "machine_c",
+                "startup_script" : "/run-c.ps1",
+                "default_user" : "admin",
+                "default_user_pwd" : "pwdpwdpwd"
+            }
+        },
+        {
+            "name" : "windows_server_a",
+            "vm_machine" : "Windows_Server",
+            "values" : {
+                "name" : "pos_a",
+                "startup_script" : "/pos-startup.ps1",
+                "default_user" : "admin",
+                "default_user_pwd" : "pwd",
+                "default_ip" : "192.168.10.10/24",
+                "default_gw" : "192.168.10.1",
+                "default_dns" : ["192.168.10.10","192.168.10.11"]
+            }
+        },
+        {
+            "name" : "windows_server_b",
+            "vm_machine" : "Windows_Server",
+            "values" : {
+                "name" : "pos_b",
+                "startup_script" : "/pos-startup.ps1",
+                "default_user" : "admin",
+                "default_user_pwd" : "pwd",
+                "default_ip" : "192.168.10.11/24",
+                "default_gw" : "192.168.10.1",
+                "default_dns" : ["192.168.10.11","192.168.10.10"]
+            }
+        }
+    ],
+    "vms" : [
+        {
+            "name" : "Windows_10",
+            "file_name" : "windows-generic.qcow2"
+        },
+        {
+            "name" : "Windows_Server",
+            "file_name" : "windows-generic.qcow2"
+        }
+    ]
+}

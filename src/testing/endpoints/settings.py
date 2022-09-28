@@ -71,7 +71,7 @@ async def set_git_token(token_value: str):
     500: {"description": "Unable To Update repo Url"}
 })
 async def set_repo_url(repo_url: str):
-    """ Updates the git token, and stores it in the secrets vault """
+    """ Updates the git token, and stores it in the secrets vault : TESTING - ALWAYS SUCESS """
     return {"status":"success"}
 
 @router.post("/rebuild", responses={

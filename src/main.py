@@ -36,5 +36,8 @@ if __name__ == "__main__":
     # Enable Logging
     helper.Configure_Logging()
 
+    # Build VM List
+    helper.build_vm_info()
+
     # Run Web App
     uvicorn.run(app, host="0.0.0.0", port=8080)

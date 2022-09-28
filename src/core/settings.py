@@ -1,6 +1,9 @@
+from typing import Dict, List
 from pydantic import BaseSettings
 from pathlib import Path
 import os
+
+from models.vm import vm_parameter_set, vm_image
 
 base_path = Path(__file__).parent
 
@@ -14,6 +17,10 @@ class Settings(BaseSettings):
     save_file_directory: str = os.environ.get('SAVE_PATH',save_path)
     git_token: str = os.environ.get('GIT_TOKEN','')
     copy_from_repo: str = os.environ.get('COPY_FROM_REPO','greavr/anthos-edge-workloads')
+    vm_image_bucket: str = os.environ.get('VM_IMAGE_BUCKET','')
+    vm_machine_list: List[vm_image] = []
+    vm_file_file: str = str((base_path / "helper/vms.json").resolve())
+    vm_parameters: List[vm_parameter_set] = []
 
     def lookup_values(self):
 

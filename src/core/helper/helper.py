@@ -1,11 +1,15 @@
 from typing import Dict
-from core.settings import app_settings
 import logging
 import csv
+import json
 import cachetools.func
 
 import google.cloud.logging
 from google.cloud.logging.handlers import CloudLoggingHandler, setup_logging
+
+from core.settings import app_settings
+from models.vm import vm_parameter_set, vm_image
+
 
 def Configure_Logging():
     """ Function to build logging"""
@@ -31,4 +35,35 @@ def lookup_location(gcp_region: str) -> Dict[str,str]:
                 result["longitude"] = aItem["longitude"]
                    
     return result
-    
+
+
+def build_vm_info():
+    """ This function builds a list of avaiable VM's and Parameter Sets"""
+
+    with open(app_settings.vm_file_file) as f:
+        data = json.load(f)
+
+        # Build VM List
+        vm_list = []
+        for i in data["vms"]:
+            this_vm = vm_image(
+                name = i["name"],
+                image_path=app_settings.vm_image_bucket + "/" + i["file_name"]
+            )
+            vm_list.append(this_vm)
+
+        # Add to settings
+        app_settings.vm_machine_list = vm_list
+
+        # Build Parameter List
+        vm_parameter_list = []
+        for i in data["parameters"]:
+            this_set = vm_parameter_set(
+                name = i["name"],
+                vm_machine= i["vm_machine"],
+                values=i["values"]
+            )
+            vm_parameter_list.append(this_set)
+
+        # Add to settings
+        app_settings.vm_parameters = vm_parameter_list
