@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 
 from models.vm import vm_parameter_set, vm_image
+from models.acm import Policy
 
 base_path = Path(__file__).parent
 
@@ -21,6 +22,8 @@ class Settings(BaseSettings):
     vm_machine_list: List[vm_image] = []
     vm_file_file: str = str((base_path / "helper/vms.json").resolve())
     vm_parameters: List[vm_parameter_set] = []
+    acm_policy_list: List[Policy] = []
+    fleet_monitoring_urls: List[str] =[]
 
     def lookup_values(self):
 

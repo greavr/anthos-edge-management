@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException
 from core.settings import app_settings
 from core.gcp import gcp, acm, git
 
+from models.urls import fleet_url_list
+
 #APIRouter creates path operations for abm module
 router = APIRouter(
     prefix="/testing/settings",
@@ -58,7 +60,6 @@ async def set_git_token(token_value: str):
     """ Updates the git token, and stores it in the secrets vault """
     return {"status":"success"}
 
-
 @router.post("/acm-repo-url", responses={
     200: {
         "description": "Update ACM Source Repo",
@@ -89,7 +90,6 @@ async def rebuild_repo(should_execute: bool):
     """ This function rebuilds the git repo with cluster info fround in ABM : TESTING - ALWAYS SUCCESS """
     return {"status": "success", }
 
-
 @router.post("/delete-repo-file", responses={
     200: {
         "description": "Delete file fromRepo",
@@ -106,3 +106,19 @@ async def delete_repo_file(file_to_remove: str = ""):
     """ This function deletes either a file, or all the files in the entire repo : TESTING - ALWAYS SUCCESS"""
     raise HTTPException(status_code=500, detail=f"Unable delete repo file")
 
+@router.get("/fleet-monitoring", response_model=fleet_url_list)
+async def show_monitoring_urls():
+    """ This function returns list of fleet monitoring metrics : TESTING - ALWAYS SUCCESS  """
+    this_response = fleet_url_list(
+        in_store_iot="http://34.170.231.75:3000/d/7vO9-x4Vz/instore-iot?orgId=1&from=1664810635205&to=1664832235205",
+        fleet_hardware="http://34.170.231.75:3000/d/w0VkBx4Vz/hardware?orgId=1&from=1664810673259&to=1664832273259",
+        store_wait="http://34.170.231.75:3000/d/wYOmfbV4k/store-wait?orgId=1&from=1664810709558&to=1664832309558",
+        graph_list=[
+            "http://34.170.231.75:3000/d-solo/k8s_views_global/kubernetes-views-global?orgId=1&refresh=30s&from=1664828762224&to=1664832362224&panelId=52",
+            "http://34.170.231.75:3000/d-solo/k8s_views_global/kubernetes-views-global?orgId=1&refresh=30s&from=1664828806401&to=1664832406401&panelId=72",
+            "http://34.170.231.75:3000/d-solo/k8s_views_global/kubernetes-views-global?orgId=1&refresh=30s&from=1664828835132&to=1664832435132&panelId=54",
+            "http://34.170.231.75:3000/d-solo/k8s_views_global/kubernetes-views-global?orgId=1&refresh=30s&from=1664828851498&to=1664832451498&viewPanel=73"
+        ]
+    )
+
+    return this_response

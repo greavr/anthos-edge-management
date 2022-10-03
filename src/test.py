@@ -1,5 +1,3 @@
-from core.gcp import git, acm, file_manager
-import logging
+from core.helper import helper
 
-logging.basicConfig(level=logging.INFO)
-
+print(helper.build_policy_list())

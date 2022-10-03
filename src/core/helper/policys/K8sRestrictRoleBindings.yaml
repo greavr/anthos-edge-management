@@ -1,0 +1,16 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRestrictRoleBindings
+metadata:
+  name: restrict-clusteradmin-rolebindings-sample
+  description: "Restricts the subjects specified in ClusterRoleBindings and RoleBindings to a list of allowed subjects."
+spec:
+  enforcementAction: dryrun
+  parameters:
+    allowedSubjects:
+    - apiGroup: rbac.authorization.k8s.io
+      kind: Group
+      name: system:masters
+    restrictedRole:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: cluster-admin

@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException
 from core.settings import app_settings
 from core.gcp import gcp, acm, git
 
+from models.urls import fleet_url_list
+
 #APIRouter creates path operations for abm module
 router = APIRouter(
     prefix="/v1/settings",
@@ -133,3 +135,21 @@ async def delete_repo_file(file_to_remove: str = ""):
         return {"status": "success","file":file_to_remove }
 
 
+
+@router.get("/fleet-monitoring", response_model=fleet_url_list)
+async def show_monitoring_urls():
+    """ This function returns list of fleet monitoring metrics : TESTING - ALWAYS SUCCESS  """
+    # TODO
+    this_response = fleet_url_list(
+        in_store_iot="http://34.170.231.75:3000/d/7vO9-x4Vz/instore-iot?orgId=1&from=1664810635205&to=1664832235205",
+        fleet_hardware="http://34.170.231.75:3000/d/w0VkBx4Vz/hardware?orgId=1&from=1664810673259&to=1664832273259",
+        store_wait="http://34.170.231.75:3000/d/wYOmfbV4k/store-wait?orgId=1&from=1664810709558&to=1664832309558",
+        graph_list=[
+            "http://34.170.231.75:3000/d-solo/k8s_views_global/kubernetes-views-global?orgId=1&refresh=30s&from=1664828762224&to=1664832362224&panelId=52",
+            "http://34.170.231.75:3000/d-solo/k8s_views_global/kubernetes-views-global?orgId=1&refresh=30s&from=1664828806401&to=1664832406401&panelId=72",
+            "http://34.170.231.75:3000/d-solo/k8s_views_global/kubernetes-views-global?orgId=1&refresh=30s&from=1664828835132&to=1664832435132&panelId=54",
+            "http://34.170.231.75:3000/d-solo/k8s_views_global/kubernetes-views-global?orgId=1&refresh=30s&from=1664828851498&to=1664832451498&viewPanel=73"
+        ]
+    )
+
+    return this_response

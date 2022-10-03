@@ -1,14 +1,18 @@
-from typing import Dict
+from typing import Dict, List
 import logging
 import csv
 import json
 import cachetools.func
+import os
+import yaml
+from pathlib import Path
 
 import google.cloud.logging
 from google.cloud.logging.handlers import CloudLoggingHandler, setup_logging
 
 from core.settings import app_settings
 from models.vm import vm_parameter_set, vm_image
+from models.acm import Policy
 
 
 def Configure_Logging():
@@ -67,3 +71,31 @@ def build_vm_info():
 
         # Add to settings
         app_settings.vm_parameters = vm_parameter_list
+
+@cachetools.func.ttl_cache(maxsize=128, ttl=60)
+def build_policy_list():
+    """ Return list of ACM Policy objects"""
+    results = []
+    policy_folder  = (Path(__file__).parent / "policys").resolve()
+
+    # Itterate over policy files locally
+    for afile in os.scandir(policy_folder):
+        # Validate if object is a file
+        if afile.is_file():
+            print(afile.path)
+
+            # Read File
+            with open(afile) as policy_doc:
+                read_data = yaml.load(policy_doc, Loader=yaml.FullLoader)
+                this_policy = Policy(
+                    name=str(read_data["metadata"]["name"]),
+                    version="1.0",
+                    details=str(read_data["metadata"]["description"]),
+                    content=str(read_data)
+                )
+
+            results.append(this_policy)
+
+
+    # Results
+    app_settings.acm_policy_list = results

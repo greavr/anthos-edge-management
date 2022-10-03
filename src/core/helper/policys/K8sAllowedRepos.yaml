@@ -1,0 +1,17 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sAllowedRepos
+metadata:
+  name: require-repo-is-gcr
+  description: "Requires container images to begin with a string from the specified list."
+spec:
+  match:
+    kinds:
+    - apiGroups:
+      - ""
+      kinds:
+      - Pod
+    namespaces:
+    - default
+  parameters:
+    repos:
+    - gcr.io/

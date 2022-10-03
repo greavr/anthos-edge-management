@@ -39,5 +39,8 @@ if __name__ == "__main__":
     # Build VM List
     helper.build_vm_info()
 
+    # Build Policy List
+    helper.build_policy_list()
+
     # Run Web App
     uvicorn.run(app, host="0.0.0.0", port=8080)

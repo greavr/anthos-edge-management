@@ -1,0 +1,15 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sContainerLimits
+metadata:
+  name: container-must-have-limits
+  description: "Requires containers to have memory and CPU limits set and constrains limits to be within the specified maximum values. https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+spec:
+  match:
+    kinds:
+    - apiGroups:
+      - ""
+      kinds:
+      - Pod
+  parameters:
+    cpu: 200m
+    memory: 1Gi
