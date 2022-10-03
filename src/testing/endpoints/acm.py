@@ -31,9 +31,24 @@ async def get_acm_repo():
         return {"url": result, }
 
 
+@router.get("/application-list", responses={
+    200: {
+        "description": "Available Applications",
+        "content": {
+            "application/json": [
+                {"pos_v1", "pos_v2"}
+            ]
+        }
+    },
+    500: {"description": "Unable find setting"}
+})
+async def application_list():
+    """This function returns a list of available applications : TESTING - ALWAYS SUCCESS""" 
+    return {"pos_v1", "pos_v2"}
+
 @router.get("/policy_list", response_model=List[Policy])
 async def policy_list():
-    """ Return List of Available Policies"""
+    """ Return List of Available Policies : TESTING - ALWAYS SUCCESS"""
     return app_settings.acm_policy_list
 
 @router.post("/apply-policy", responses={
@@ -47,6 +62,6 @@ async def policy_list():
     },
     500: {"description": "Unable to apply policy"}
 })
-async def apply_policy(policy_name: str, target_labels: Union[List[str], None]):
+async def apply_policy(target_labels: Union[List[str], None],application_name: str = "NA", policy_name: str = "NA"):
     """ Apply Policy with labels : TESTING - ALWAYS SUCCESS"""
     return {"status": "success", }
