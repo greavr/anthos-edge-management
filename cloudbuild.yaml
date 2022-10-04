@@ -8,6 +8,6 @@ steps:
 # Deploy container image to Cloud Run
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
-  args: ['run', 'deploy', 'edge-demo', '--image', 'gcr.io/$PROJECT_ID/edge-demo', '--region', 'us-west1', '--allow-unauthenticated', '--timeout','50m', '--no-cpu-throttling', '--memory', '2Gi', '--cpu', '4', '--update-env-vars', 'GCP_PROJECT=$PROJECT_ID,VM_IMAGE_BUCKET=gs://rgreaves-gke-chaos-kubevirt"']
+  args: ['run', 'deploy', 'edge-demo', '--image', 'gcr.io/$PROJECT_ID/edge-demo', '--region', 'us-west1', '--allow-unauthenticated', '--timeout','50m', '--no-cpu-throttling', '--memory', '2Gi', '--cpu', '4', '--update-env-vars', 'GCP_PROJECT=$PROJECT_ID,VM_IMAGE_BUCKET=gs://rgreaves-gke-chaos-kubevirt']
 images:
 - gcr.io/$PROJECT_ID/edge-demo

@@ -2,6 +2,7 @@ from google.cloud import gkehub_v1
 from google.cloud import secretmanager
 import cachetools.func
 import logging
+from datetime import datetime
 from typing import List
 
 from core.gcp import acm    
@@ -43,8 +44,13 @@ def get_abm_list() -> List[Abm]:
             cluster_name = response.name.split("/")[-1]
 
             # Lookup Status
-            acm_status = acm.acm_status(which_cluser_name=cluster_name)
-
+            this_acm_status = acm.acm_status(which_cluser_name=cluster_name)
+            acm_status_code = this_acm_status[0]
+            acm_update_time = this_acm_status[1]
+            # Validate date / time
+            if acm_update_time == "":
+                acm_update_time = datetime.now()
+            print(f"ACM STATUS: {this_acm_status}")
 
             # Create new class
             thisAbm = Abm(
@@ -58,10 +64,9 @@ def get_abm_list() -> List[Abm]:
                 update_time = response.endpoint.kubernetes_metadata.update_time,
                 lat_long = helper.lookup_location(gcp_region=this_location),
                 labels = response.labels,
-                acm_status=acm_status[0],
-                acm_update_time=acm_status[1]
+                acm_status=acm_status_code,
+                acm_update_time=acm_update_time
             )
-
             
 
             logging.info(thisAbm)

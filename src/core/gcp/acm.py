@@ -18,7 +18,7 @@ def get_source_repo() -> List[str]:
 @cachetools.func.ttl_cache(maxsize=128, ttl=1)
 def acm_status(which_cluser_name: str) -> List[str]:
     """ This function returns a list of clusters, with current ACM status """
-    cluster_list = []
+    cluster_list = ["NOT_INSTALLED",""]
 
     try:
         # Create a client
@@ -56,7 +56,7 @@ def acm_status(which_cluser_name: str) -> List[str]:
                 last_update = ""
             
             if which_cluser_name == cluster_name:
-                return [status,str(last_update)]
+                return [status,last_update]
 
     except Exception as e:
         logging.error(e)
@@ -72,7 +72,6 @@ def build_repo() -> bool:
         abm_list = gcp.get_abm_list()
 
         # For each cluster create cluster registry file
-
         this_cluster_file = file_manager.rebuild_clusters(cluster_list=abm_list)
         logging.debug(this_cluster_file)
         print(this_cluster_file)
