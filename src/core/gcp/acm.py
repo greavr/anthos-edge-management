@@ -16,19 +16,11 @@ def get_source_repo() -> List[str]:
     return app_settings.source_repo
 
 @cachetools.func.ttl_cache(maxsize=128, ttl=1)
-def acm_status(cluser_name: str = "*") -> List[Abm]:
+def acm_status(which_cluser_name: str) -> List[str]:
     """ This function returns a list of clusters, with current ACM status """
     cluster_list = []
 
     try:
-
-        # Get ABM list
-        cluster_list = gcp.get_abm_list()
-
-        # No Nodes Found
-        if not cluster_list:
-            return cluster_list
-
         # Create a client
         client = gkehub_v1.GkeHubClient()
 
@@ -51,7 +43,7 @@ def acm_status(cluser_name: str = "*") -> List[Abm]:
             ## https://cloud.google.com/python/docs/reference/gkehub/latest/google.cloud.gkehub_v1.types.FeatureState
             if status_code == 5:
                 status = "NOT_INSTALLED"
-            elif status_code == 3:
+            elif status_code == 2:
                 status = "ERROR"
             elif status_code == 1:
                 status = "SYNCED"
@@ -63,13 +55,8 @@ def acm_status(cluser_name: str = "*") -> List[Abm]:
             else:
                 last_update = ""
             
-            # Append Value to cluster list
-            for aCluster in cluster_list:
-                if aCluster.name == cluster_name:
-                    aCluster.acm_status = status
-                    # Validate Last Sync was
-                    if last_update:
-                        aCluster.acm_update_time = last_update
+            if which_cluser_name == cluster_name:
+                return [status,str(last_update)]
 
     except Exception as e:
         logging.error(e)

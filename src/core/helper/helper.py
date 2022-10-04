@@ -82,8 +82,6 @@ def build_policy_list():
     for afile in os.scandir(policy_folder):
         # Validate if object is a file
         if afile.is_file():
-            print(afile.path)
-
             # Read File
             with open(afile) as policy_doc:
                 read_data = yaml.load(policy_doc, Loader=yaml.FullLoader)

@@ -1,10 +1,10 @@
-import hashlib
 from google.cloud import gkehub_v1
 from google.cloud import secretmanager
 import cachetools.func
 import logging
 from typing import List
 
+from core.gcp import acm    
 from core.settings import app_settings
 from core.helper import helper
 from models.abm import Abm
@@ -33,15 +33,22 @@ def get_abm_list() -> List[Abm]:
         # Handle the response
         for response in page_result:
             # Get Location from label
+            print(response)
             try:
                 this_location = response.labels["loc"]
             except:
                 this_location = response.name.split("/")[-3]
 
+            # Generate Friendly Name
+            cluster_name = response.name.split("/")[-1]
+
+            # Lookup Status
+            acm_status = acm.acm_status(which_cluser_name=cluster_name)
+
 
             # Create new class
             thisAbm = Abm(
-                name = response.name.split("/")[-1],
+                name = cluster_name,
                 location = this_location,
                 version = response.endpoint.kubernetes_metadata.kubernetes_api_server_version,
                 node_count = response.endpoint.kubernetes_metadata.node_count,
@@ -50,7 +57,9 @@ def get_abm_list() -> List[Abm]:
                 cluster_state = str(response.state.code).split(".")[-1],
                 update_time = response.endpoint.kubernetes_metadata.update_time,
                 lat_long = helper.lookup_location(gcp_region=this_location),
-                labels = response.labels
+                labels = response.labels,
+                acm_status=acm_status[0],
+                acm_update_time=acm_status[1]
             )
 
             

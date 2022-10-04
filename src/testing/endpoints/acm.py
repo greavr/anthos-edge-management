@@ -62,6 +62,11 @@ async def policy_list():
     },
     500: {"description": "Unable to apply policy"}
 })
-async def apply_policy(target_labels: Union[List[str], None],application_name: str = "NA", policy_name: str = "NA"):
-    """ Apply Policy with labels : TESTING - ALWAYS SUCCESS"""
+async def apply_policy(target_labels: dict ,application_name: str = "NA", policy_name: str = "NA"):
+    """ Apply Policy with labels. Body is made of Key : Value pairing of cluster labels.
+    Defaults to using 'all' selector if no key:value pair set for target_labels : TESTING - ALWAYS SUCCESS"""
+
+    if application_name == policy_name:
+        raise HTTPException(status_code=418, detail="Missing either 'application_name' or 'policy_name'.")
+        
     return {"status": "success", }

@@ -1,3 +1,5 @@
 from core.helper import helper
 
-print(helper.build_policy_list())
+from core.gcp import gcp
+
+print(gcp.get_abm_list())
