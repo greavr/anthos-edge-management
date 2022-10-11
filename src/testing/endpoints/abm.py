@@ -40,9 +40,8 @@ async def list_of_abm_clusters():
             acm_update_time=datetime.now(),
             lat_long = helper.lookup_location(gcp_region=a_region),
             labels={
-                "state" : random.choice(["AL","MT","AK","NE","AZ","NV","AR","NH","CA","NJ","CO","NM","CT","NY","DE","NC","FL","ND","GA","OH","HI","OK","ID","OR","IL","PA","IN","RI","IA","SC","KS","SD","KY","TN","LA","TX","ME","UT","MD","VT","MA","VA","MI","WA","MN","WV","MS","WI","MO","WY"]),
                 "canary" : random.choice(["100","50","25","10"]),
-                "region" : random.choice(["north","east","west","south"]),
+                "continent" : a_region.split("-")[0],
                 "loc" : a_region
             }
         )

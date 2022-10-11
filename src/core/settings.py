@@ -23,7 +23,8 @@ class Settings(BaseSettings):
     vm_file_file: str = str((base_path / "helper/vms.json").resolve())
     vm_parameters: List[vm_parameter_set] = []
     acm_policy_list: List[Policy] = []
-    fleet_monitoring_urls: List[str] =[]
+    fleet_monitoring_urls: List[str] = []
+    acm_status = []
 
     def lookup_values(self):
 

@@ -4,6 +4,7 @@ import cachetools.func
 import logging
 from datetime import datetime
 from typing import List
+import time
 
 from core.gcp import acm    
 from core.settings import app_settings
@@ -17,6 +18,8 @@ def get_abm_list() -> List[Abm]:
 
     # Result List
     abm_list = []
+    # Update ACM Status
+    acm.call_acm()
 
     # Build Client
     try:
@@ -34,7 +37,6 @@ def get_abm_list() -> List[Abm]:
         # Handle the response
         for response in page_result:
             # Get Location from label
-            print(response)
             try:
                 this_location = response.labels["loc"]
             except:
@@ -71,7 +73,6 @@ def get_abm_list() -> List[Abm]:
 
             logging.info(thisAbm)
             abm_list.append(thisAbm)
-
 
     except Exception as e:
         logging.error(e)

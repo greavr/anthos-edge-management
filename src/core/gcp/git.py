@@ -4,6 +4,7 @@ from pathlib import Path
 from github import Github
 from urllib.parse import urlparse
 
+
 from core.settings import app_settings
 
 def get_repos():
@@ -48,7 +49,6 @@ def check_file(file_path: str) -> str:
 
     return result
     
-
 def add_file_to_branch(file_list: List[str]) -> list[str]:
     """ This function writes files to the git repo (Sadly one at a time)"""
     uploaded_files = []
@@ -106,7 +106,9 @@ def get_file_contents() -> dict[str,str]:
         if file_content.type == "dir":
             contents.extend(repo.get_contents(file_content.path))
         else:
-            file_list[file_content.path] = file_content.decoded_content.decode('utf-8')
+            if (".yaml" in file_content.name) and not ("cloudbuild" in file_content.name ):                
+                file_list[file_content.path] = file_content.decoded_content.decode('utf-8')
+
     
     return file_list
 

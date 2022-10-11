@@ -9,7 +9,5 @@ class abm_url_list(BaseModel):
 
 class fleet_url_list(BaseModel):
     """ Monitoring URLS """
-    in_store_iot: str
-    fleet_hardware: str
-    store_wait: str
-    graph_list: List[str]
+    overview: List[List[str]]
+    resources: List[List[str]]

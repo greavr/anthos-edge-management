@@ -14,6 +14,10 @@ def create_selector(selector_name: str, match_labels: Dict[str, str]):
     """ This function creates a cluster config selector and add its to the git repo"""
     "Format for the selector can be found here: https://cloud.google.com/anthos-config-management/docs/how-to/clusterselectors#cluster-configs"
 
+    # Dont creator selector for mesh_id
+    if "mesh_id" in selector_name:
+        return ""
+
     label_set = {}
 
     for key, val in match_labels.items():
@@ -255,43 +259,43 @@ def rebuild_clusters(cluster_list: List[Abm]) -> List[str]:
     # Return list
     git_added_files = []
 
-    try: 
+    # try: 
         # Create All Cluster Selector
-        file_list.append(create_selector(selector_name=f"all-sel", match_labels={"loc":'*'}))
-        # Create Default apps
-        git_file_to_create = git.get_file_contents()
-        for key,value in git_file_to_create.items():
-            file_list.append(create_repo_file(file_name=key, file_contents=value))
+        #file_list.append(create_selector(selector_name=f"all-sel", match_labels={"loc":'*'}))
+    # Create Default apps
+    git_file_to_create = git.get_file_contents()
+    for key,value in git_file_to_create.items():
+        file_list.append(create_repo_file(file_name=key, file_contents=value))
 
-        # Add cluster specific features
-        for aCluster in cluster_list:
+    # Add cluster specific features
+    for aCluster in cluster_list:
 
-            # Cluster Object
-            file_list.append(create_cluster(cluster_name=aCluster.name, labels=aCluster.labels))
-            # Repo Sync File
-            file_list.append(create_repo_sync(cluster_name=aCluster.name,selector_name=f"{aCluster.name}-sel"))
-            # RBAC roles
-            file_list.append(create_role_binding(cluster_name=aCluster.name, selector_name=f"{aCluster.name}-sel"))
+        # Cluster Object
+        file_list.append(create_cluster(cluster_name=aCluster.name, labels=aCluster.labels))
+        # Repo Sync File
+        #file_list.append(create_repo_sync(cluster_name=aCluster.name,selector_name=f"{aCluster.name}-sel"))
+        # RBAC roles
+        #file_list.append(create_role_binding(cluster_name=aCluster.name, selector_name=f"{aCluster.name}-sel"))
 
-            # location selector
-            file_list.append(create_selector(selector_name=f"{aCluster.name}-sel", match_labels={"loc":aCluster.labels["loc"]}))
-            
-            # per-label selector
-            for key, value in aCluster.labels.items():
-                if key != "loc":
-                    file_list.append(create_selector(selector_name=f"{key}-{value}-sel", match_labels={key:value}))
-
-            # Cleanup file list
-            while("" in file_list):
-                file_list.remove("")
+        # location selector
+        file_list.append(create_selector(selector_name=f"{aCluster.name}-sel", match_labels={"loc":aCluster.labels["loc"]}))
         
-        # Finally sync to git
-        git_added_files = git.add_file_to_branch(file_list=file_list)
-        cleanup_local_folder()
+        # per-label selector
+        for key, value in aCluster.labels.items():
+            if key != "loc":
+                file_list.append(create_selector(selector_name=f"{key}-{value}-sel", match_labels={key:value}))
 
-    except Exception as e:
-        logging.error(e)
-        print(e)
+        # Cleanup file list
+        while("" in file_list):
+            file_list.remove("")
+    
+    # Finally sync to git
+    git_added_files = git.add_file_to_branch(file_list=file_list)
+    cleanup_local_folder()
+
+    # except Exception as e:
+    #     logging.error(e)
+    #     print(e)
      
 
     return git_added_files
