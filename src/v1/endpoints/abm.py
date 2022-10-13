@@ -22,12 +22,12 @@ async def list_of_abm_clusters():
     return gcp.get_abm_list()
 
 
-@router.get("/logs/{cluster_name}", response_model=List[abm_log_item])
+@router.get("/logs/", response_model=List[abm_log_item])
 async def cluster_details(cluster_name: str, row_count: int = 100):
     """ Get a list of logs from the ABM Cluster"""
     return logging.GetLogs(cluster_name=cluster_name, row_count=row_count)
 
-@router.get("/urls/{cluster_name}", response_model=abm_url_list)
+@router.get("/urls/", response_model=abm_url_list)
 async def cluster_details(cluster_name: str):
     """ This function returns list of urls per cluster after looking up from GCP Secret"""
     raw_data = gcp.get_secret_value(secret_name=cluster_name)

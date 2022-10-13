@@ -10,8 +10,6 @@ from models.logs import abm_log_item
 from models.urls import abm_url_list
 from models.abm_node import AbmNode
 
-
-
 #APIRouter creates path operations for abm module
 router = APIRouter(
     prefix="/testing/abm",
@@ -49,7 +47,7 @@ async def list_of_abm_clusters():
     
     return canned_values
 
-@router.get("/logs/{cluster_name}", response_model=List[abm_log_item])
+@router.get("/logs/", response_model=List[abm_log_item])
 async def cluster_details(cluster_name: str, row_count: int = 100):
     """ Get a list of logs from the ABM Cluster : TESTING - ALWAYS SUCCESS"""  
     canned_values = []
@@ -64,11 +62,11 @@ async def cluster_details(cluster_name: str, row_count: int = 100):
     
     return canned_values
 
-@router.get("/urls/{cluster_name}", response_model=abm_url_list)
-async def cluster_details(cluster_name: str):
+@router.get("/urls/", response_model=abm_url_list)
+async def testing_cluster_details(cluster_name: str):
     canned_urls = abm_url_list(
-        store_pages=["http://34.136.229.143/","http://34.135.44.180/restaurant"],
-        monitoring_dashboar="http://34.170.231.75:3000/d/mjXIGgV4k/restaurant-of-the-future-metrics?orgId=1",
+        store_pages=["http://104.198.3.165/","http://34.168.57.77/restaurant"],
+        monitoring_dashboar="http://34.82.239.219:3000/",
         metrics_endpoint = "http://35.193.141.59:8080/"  )
     return canned_urls
 
