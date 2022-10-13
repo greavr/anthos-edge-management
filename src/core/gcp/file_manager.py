@@ -109,114 +109,6 @@ def create_cluster(cluster_name: str, labels: Dict[str,str]):
     # Return path to file
     return save_file
 
-def create_repo_sync(cluster_name: str, selector_name: str ):
-    """ This function creates repo sync config and rbac roles"""
-    " More details here: https://cloud.google.com/anthos-config-management/docs/how-to/unstructured-repo#configure_an_unstructured_repository"
-
-    outputFile = {
-        "apiVersion": "configsync.gke.io/v1alpha1",
-        "kind": "RepoSync",
-        "metadata": {
-            "name": "repo-sync",
-            "annotations": {
-                "configmanagement.gke.io/cluster-selector": selector_name
-            }
-        },
-        "spec": {
-            "git": {
-                "repo": f"{app_settings.source_repo}.git",
-                "branch": "main",
-                "dir": f"/{cluster_name}",
-                "auth": "none"
-            }
-        }
-    }
-    
-    save_file = ""
-    try:
-        folder_path = f"{app_settings.save_file_directory}{cluster_name}"
-
-        # Build folder if not present
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
-
-        save_file = f"{folder_path}/repo-sync.yaml"
-
-
-        # Check if repo-sync already exists
-        if os.path.exists(save_file):
-            logging.debug(f"Existing file found: {save_file}")
-            return save_file
-
-        # Write file locally
-        with open(save_file, 'w') as yaml_file:
-            yaml.dump(outputFile, yaml_file)
-
-
-        logging.debug(yaml.dump(outputFile))
-    except Exception as e:
-        logging.error(e)
-        print(e)
-
-    # Return path to file
-    return save_file
-
-def create_role_binding(cluster_name: str, selector_name: str):
-    """ This function created RBAC for syncing"""
-    " More Details Here: https://cloud.google.com/anthos-config-management/docs/how-to/unstructured-repo#configure_an_unstructured_repository"
-
-
-    outputFile = {
-        "kind": "RoleBinding",
-        "apiVersion": "rbac.authorization.k8s.io/v1",
-        "metadata": {
-            "name": "syncs-repo-crb",
-            "annotations": {
-                "configmanagement.gke.io/cluster-selector": selector_name
-            }
-        },
-        "subjects": {
-            "kind": "ServiceAccount",
-            "name": f"ns-reconciler-{cluster_name}",
-            "namespace": "config-management-system",
-        },
-        "roleRef": {
-            "kind": "ClusterRole",
-            "name": "cluster-admin",
-            "apiGroup": "rbac.authorization.k8s.io"
-        }
-    }
-    
-
-    save_file = ""
-    try:
-        folder_path = f"{app_settings.save_file_directory}{cluster_name}"
-
-        # Build folder if not present
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
-
-        save_file = f"{folder_path}/repo-rbac.yaml"
-
-
-        # Check if rbac already exists
-        if os.path.exists(save_file):
-            logging.debug(f"Existing file found: {save_file}")
-            return save_file
-
-        # Write file locally
-        with open(save_file, 'w') as yaml_file:
-            yaml.dump(outputFile, yaml_file)
-
-
-        logging.debug(yaml.dump(outputFile))
-    except Exception as e:
-        logging.error(e)
-        print(e)
-
-    # Return path to file
-    return save_file
-
 def create_repo_file(file_name: str, file_contents: str, basefolder: str = "default") -> str:
     """ This function creates local file"""
 
@@ -259,43 +151,37 @@ def rebuild_clusters(cluster_list: List[Abm]) -> List[str]:
     # Return list
     git_added_files = []
 
-    # try: 
-        # Create All Cluster Selector
-        #file_list.append(create_selector(selector_name=f"all-sel", match_labels={"loc":'*'}))
-    # Create Default apps
-    git_file_to_create = git.get_file_contents()
-    for key,value in git_file_to_create.items():
-        file_list.append(create_repo_file(file_name=key, file_contents=value))
+    try: 
+        # Create Default apps
+        git_file_to_create = git.get_file_contents()
+        for key,value in git_file_to_create.items():
+            file_list.append(create_repo_file(file_name=key, file_contents=value))
 
-    # Add cluster specific features
-    for aCluster in cluster_list:
+        # Add cluster specific features
+        for aCluster in cluster_list:
 
-        # Cluster Object
-        file_list.append(create_cluster(cluster_name=aCluster.name, labels=aCluster.labels))
-        # Repo Sync File
-        #file_list.append(create_repo_sync(cluster_name=aCluster.name,selector_name=f"{aCluster.name}-sel"))
-        # RBAC roles
-        #file_list.append(create_role_binding(cluster_name=aCluster.name, selector_name=f"{aCluster.name}-sel"))
+            # Cluster Object
+            file_list.append(create_cluster(cluster_name=aCluster.name, labels=aCluster.labels))
 
-        # location selector
-        file_list.append(create_selector(selector_name=f"{aCluster.name}-sel", match_labels={"loc":aCluster.labels["loc"]}))
+            # location selector
+            file_list.append(create_selector(selector_name=f"{aCluster.name}-sel", match_labels={"loc":aCluster.labels["loc"]}))
+            
+            # per-label selector
+            for key, value in aCluster.labels.items():
+                if key != "loc":
+                    file_list.append(create_selector(selector_name=f"{key}-{value}-sel", match_labels={key:value}))
+
+            # Cleanup file list
+            while("" in file_list):
+                file_list.remove("")
         
-        # per-label selector
-        for key, value in aCluster.labels.items():
-            if key != "loc":
-                file_list.append(create_selector(selector_name=f"{key}-{value}-sel", match_labels={key:value}))
+        # Finally sync to git
+        git_added_files = git.add_file_to_branch(file_list=file_list)
+        cleanup_local_folder()
 
-        # Cleanup file list
-        while("" in file_list):
-            file_list.remove("")
-    
-    # Finally sync to git
-    git_added_files = git.add_file_to_branch(file_list=file_list)
-    cleanup_local_folder()
-
-    # except Exception as e:
-    #     logging.error(e)
-    #     print(e)
+    except Exception as e:
+        logging.error(e)
+        print(e)
      
 
     return git_added_files

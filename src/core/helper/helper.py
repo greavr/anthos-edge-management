@@ -40,7 +40,7 @@ def lookup_location(gcp_region: str) -> Dict[str,str]:
                    
     return result
 
-
+@cachetools.func.ttl_cache(maxsize=128, ttl=60)
 def build_vm_info():
     """ This function builds a list of avaiable VM's and Parameter Sets"""
 

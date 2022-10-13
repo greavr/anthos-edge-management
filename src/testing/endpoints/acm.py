@@ -30,7 +30,6 @@ async def get_acm_repo():
     else:
         return {"url": result, }
 
-
 @router.get("/application-list", responses={
     200: {
         "description": "Available Applications",

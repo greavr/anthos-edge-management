@@ -49,7 +49,6 @@ async def list_of_abm_clusters():
     
     return canned_values
 
-
 @router.get("/logs/{cluster_name}", response_model=List[abm_log_item])
 async def cluster_details(cluster_name: str, row_count: int = 100):
     """ Get a list of logs from the ABM Cluster : TESTING - ALWAYS SUCCESS"""  
@@ -77,8 +76,23 @@ async def cluster_details(cluster_name: str):
 async def node_list(cluster_name: str, location:str):
     """ Return details of nodes in the cluster : TESTING - ALWAYS SUCCESS"""  
     canned_values = [
-        {"name": "abm-master-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.9","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101184"},
-        {"name": "abm-worker-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.11","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101379"},
-        {"name": "abm-worker-northamerica-northeast1-1","zone": "northamerica-northeast1-a","ip": "10.0.8.10","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101453"}
+        {"name": "abm-master-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.9","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101184", "status": "RUNNING"},
+        {"name": "abm-worker-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.11","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101379", "status": "STOPPED"},
+        {"name": "abm-worker-northamerica-northeast1-1","zone": "northamerica-northeast1-a","ip": "10.0.8.10","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101453", "status": "RUNNING"}
     ]
     return canned_values
+
+@router.post("/set-urls/", responses={
+    200: {
+        "description": "Update Cluster URLS",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable to Update Cluster URLS"}
+})
+async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
+    """ Update Cluster URLS : TESTING - ALWAYS SUCCESS"""
+    return {"status":"success"}

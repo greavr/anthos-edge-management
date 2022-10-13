@@ -9,12 +9,14 @@ class AbmNode(BaseModel):
     ip: str
     instance_type: str
     disk_size_gb: int
+    status: str = ""
     update_time: datetime
 
     def __repr__(self):
         return f"""name: {self.name}, 
                 zone: {self.zone}, 
                 ip: {self.ip}, 
-                instance_type: {self.instance_type}, 
+                instance_type: {self.instance_type},
+                status: {self.status},
                 disk_size_gb: {self.disk_size_gb}, 
                 update_time: {self.update_time}"""

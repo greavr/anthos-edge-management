@@ -47,7 +47,7 @@ def start_instance(instance_name: str, instance_zone: str) -> bool:
 
 # Get Instance List
 @cachetools.func.ttl_cache(maxsize=128, ttl=5)
-def get_instance_list(cluster_name: str, location: str) -> List[AbmNode]:
+def get_instance_list(location: str, cluster_name: str = "") -> List[AbmNode]:
     """ Function returns a filtered list of instance per-cluster """
     compute_client = compute_v1.InstancesClient()
 
@@ -70,7 +70,8 @@ def get_instance_list(cluster_name: str, location: str) -> List[AbmNode]:
                             ip = instance.network_interfaces[0].network_i_p,
                             instance_type = instance.machine_type.rsplit('/', 1)[-1],
                             disk_size_gb = instance.disks[0].disk_size_gb,
-                            update_time = datetime.now()
+                            update_time = datetime.now(),
+                            status = instance.status
                         )
 
                         all_instances.append(aNode)

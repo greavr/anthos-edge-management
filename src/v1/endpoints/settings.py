@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from core.settings import app_settings
 from core.gcp import gcp, acm, git
+import json
 
 from models.urls import fleet_url_list
 
@@ -44,7 +45,6 @@ async def get_setting_value(setting_name: str = None):
 
     return result
 
-
 @router.post("/git-token", responses={
     200: {
         "description": "Update Git-Token",
@@ -66,7 +66,6 @@ async def set_git_token(token_value: str):
     else:
         app_settings.git_token = token_value
         return {"status":"success"}
-
 
 @router.post("/acm-repo-url", responses={
     200: {
@@ -112,7 +111,6 @@ async def rebuild_repo(should_execute: bool):
     else:
         raise HTTPException(status_code=500, detail=f"Did not confirm")
 
-
 @router.post("/delete-repo-file", responses={
     200: {
         "description": "Delete file fromRepo",
@@ -134,23 +132,34 @@ async def delete_repo_file(file_to_remove: str = ""):
     else:
         return {"status": "success","file":file_to_remove }
 
-
-
 @router.get("/fleet-monitoring", response_model=fleet_url_list)
 async def show_monitoring_urls():
-    """ This function returns list of fleet monitoring metrics : TESTING - ALWAYS SUCCESS  """
-    # TODO
-    this_response = fleet_url_list(
-        overview=[
-            ["http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452354605&to=1665473954605&viewPanel=2","http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452333328&to=1665473933328&theme=light&viewPanel=4"],
-            ["http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452431432&to=1665474031432&viewPanel=6", "http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452510267&to=1665474110267&viewPanel=10"],
-            ["http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452615358&to=1665474215358&viewPanel=12", "http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452719288&to=1665474319288&viewPanel=13","http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452759922&to=1665474359922&viewPanel=14"],
-            ["http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452923822&to=1665474523822&viewPanel=16"]
-        ],
-        resources=[
-            ["http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665452923822&to=1665474523822&viewPanel=16","http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665453275140&to=1665474875141&viewPanel=19"],
-            ["http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665453347726&to=1665474947726&viewPanel=20","http://34.70.222.156:3000/d/UQ6us7S4k/overview?orgId=1&from=1665453391822&to=1665474991822&viewPanel=21"]
-        ]
-    )
+    """ This function returns list of fleet monitoring metrics """
+    return app_settings.fleet_monitoring_urls
 
-    return this_response
+@router.post("/set-fleet-monitoring", responses={
+    200: {
+        "description": "Update fleet-monitoring urls",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable To fleet-monitoring urls"}
+})
+async def set_fleet_Urls(fleet_urls: fleet_url_list):
+    """ Updates the git token, and stores it in the secrets vault """
+    save_value = {}
+    save_value["overview"] = fleet_urls.overview
+    save_value["resources"] = fleet_urls.resources
+    
+    print (json.dumps(save_value))
+    result = gcp.set_secret_value(secret_name="fleet_urls", secret_value=json.dumps(save_value))
+
+    # Successfully written
+    if not result: 
+        raise HTTPException(status_code=500, detail=f"Unable To fleet-monitoring urls")
+    else:
+        app_settings.git_token = fleet_urls
+        return {"status":"success"}

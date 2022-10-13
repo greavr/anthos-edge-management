@@ -4,7 +4,6 @@ import cachetools.func
 import logging
 from datetime import datetime
 from typing import List
-import time
 
 from core.gcp import acm    
 from core.settings import app_settings
@@ -87,7 +86,6 @@ def set_secret_value(secret_name: str, secret_value: str) -> bool:
 
     # Try to create the secret
     try:
-
         # Now update the secret
         client = secretmanager.SecretManagerServiceClient()
 
@@ -104,7 +102,6 @@ def set_secret_value(secret_name: str, secret_value: str) -> bool:
 
     # Next try to add secret
     try:
-
         # Now create the value
         parent = f"projects/{app_settings.gcp_project}/secrets/{secret_name}"
         secret_value = secret_value.encode('UTF-8')
@@ -132,6 +129,7 @@ def get_secret_value(secret_name: str) -> str:
         # Access the secret version.
         response = client.access_secret_version(name=name)
         result = response.payload.data.decode('UTF-8')
+        print(result)
     
     except Exception as e:
         logging.error(e)

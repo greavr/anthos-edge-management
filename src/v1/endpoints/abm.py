@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from typing import List
+import json
 
 from core.gcp import gcp, logging, gce
 from models.abm import Abm
@@ -28,9 +29,47 @@ async def cluster_details(cluster_name: str, row_count: int = 100):
 
 @router.get("/urls/{cluster_name}", response_model=abm_url_list)
 async def cluster_details(cluster_name: str):
-    return {}
+    """ This function returns list of urls per cluster after looking up from GCP Secret"""
+    raw_data = gcp.get_secret_value(secret_name=cluster_name)
+    result_url_list = abm_url_list()
+
+    # Value foudn lookup value
+    if raw_data:
+        url_list = json.loads(raw_data)
+        result_url_list.endpoint = url_list["endpoint"]
+        result_url_list.dashboard = url_list["dashboard"]
+        result_url_list.pages = url_list["pages"]
+    
+    # Return result
+    return result_url_list
 
 @router.get("/nodes/", response_model=List[AbmNode])
 async def node_list(cluster_name: str, location:str):
     """ Return details of nodes in the cluster """
     return gce.get_instance_list(cluster_name=cluster_name, location=location)
+
+@router.post("/set-urls/", responses={
+    200: {
+        "description": "Update Cluster URLS",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable to Update Cluster URLS"}
+})
+async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
+    """ Update Cluster URLS"""
+    save_value = {}
+    save_value["pages"] = url_list.pages
+    save_value["dashboard"] =  url_list.dashboard
+    save_value["endpoint"] = url_list.endpoint
+
+    result = gcp.set_secret_value(secret_name=cluster_name, secret_value=json.dumps(save_value))
+
+    # Successfully written
+    if not result: 
+        raise HTTPException(status_code=500, detail=f"Unable To Update Token")
+    else:
+        return {"status":"success"}

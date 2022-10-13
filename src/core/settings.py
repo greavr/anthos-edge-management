@@ -2,9 +2,13 @@ from typing import Dict, List
 from pydantic import BaseSettings
 from pathlib import Path
 import os
+import json
 
 from models.vm import vm_parameter_set, vm_image
+from models.urls import fleet_url_list
 from models.acm import Policy
+
+
 
 base_path = Path(__file__).parent
 
@@ -23,21 +27,26 @@ class Settings(BaseSettings):
     vm_file_file: str = str((base_path / "helper/vms.json").resolve())
     vm_parameters: List[vm_parameter_set] = []
     acm_policy_list: List[Policy] = []
-    fleet_monitoring_urls: List[str] = []
+    fleet_monitoring_urls: fleet_url_list = []
     acm_status = []
 
     def lookup_values(self):
-
         """Function to lookup git values"""
         if self.git_token == "":
             from core.gcp import gcp
             self.git_token = gcp.get_secret_value(secret_name="git_token")
+            url_list = json.loads(gcp.get_secret_value(secret_name="fleet_urls"))
+            if url_list:
+                self.fleet_monitoring_urls = fleet_url_list(
+                    overview=url_list["overview"],
+                    resources=url_list["resources"]
+                )
+            else:
+                self.fleet_monitoring_urls = fleet_url_list()
         
         if self.source_repo == "":
             from core.gcp import gcp
             self.source_repo = gcp.get_secret_value(secret_name="source_repo")
-
-
 
 app_settings = Settings()
 app_settings.lookup_values()

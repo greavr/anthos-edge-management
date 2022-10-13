@@ -44,7 +44,6 @@ async def get_setting_value(setting_name: str = None):
 
     return result
 
-
 @router.post("/git-token", responses={
     200: {
         "description": "Update Git-Token",
@@ -123,3 +122,18 @@ async def show_monitoring_urls():
     )
 
     return this_response
+
+@router.post("/set-fleet-monitoring", responses={
+    200: {
+        "description": "Update fleet-monitoring urls  : TESTING - ALWAYS SUCCESS  ",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable To fleet-monitoring urls"}
+})
+async def set_fleet_Urls(fleet_urls: fleet_url_list):
+    """ Updates the git token, and stores it in the secrets vault  : TESTING - ALWAYS SUCCESS  """
+    return {"status":"success"}
