@@ -31,11 +31,11 @@
             }
         },
         {
-            "name" : "windows_server_a",
-            "vm_machine" : "Windows_Server",
+            "name" : "Ubuntu_a",
+            "vm_machine" : "Ubuntu",
             "values" : {
                 "name" : "pos_a",
-                "startup_script" : "/pos-startup.ps1",
+                "startup_script" : "/startup.sh",
                 "default_user" : "admin",
                 "default_user_pwd" : "pwd",
                 "default_ip" : "192.168.10.10/24",
@@ -44,11 +44,11 @@
             }
         },
         {
-            "name" : "windows_server_b",
-            "vm_machine" : "Windows_Server",
+            "name" : "Ubuntu_b",
+            "vm_machine" : "Ubuntu",
             "values" : {
                 "name" : "pos_b",
-                "startup_script" : "/pos-startup.ps1",
+                "startup_script" : "/startup_b.sh",
                 "default_user" : "admin",
                 "default_user_pwd" : "pwd",
                 "default_ip" : "192.168.10.11/24",
@@ -63,8 +63,8 @@
             "file_name" : "windows-generic.qcow2"
         },
         {
-            "name" : "Windows_Server",
-            "file_name" : "windows-generic.qcow2"
+            "name" : "Ubuntu",
+            "file_name" : "ubuntu-20.04-server-cloudimg-amd64.img"
         }
     ]
 }

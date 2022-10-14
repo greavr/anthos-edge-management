@@ -63,7 +63,7 @@ async def application_list():
 })
 async def apply_policy(target_labels: dict ,application_name: str = "NA", policy_name: str = "NA"):
     """ Apply Policy with labels. Body is made of Key : Value pairing of cluster labels.
-    Defaults to using 'all' selector if no key:value pair set for target_labels : TESTING - ALWAYS SUCCESS"""
+    Defaults to using 'all' selector if no key:value pair set for target_labels"""
 
     if application_name == policy_name:
         raise HTTPException(status_code=418, detail="Missing either 'application_name' or 'policy_name'.")

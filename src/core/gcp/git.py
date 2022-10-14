@@ -53,8 +53,11 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
     """ This function writes files to the git repo (Sadly one at a time)"""
     uploaded_files = []
 
+    # Remove dupes on large file list
     clean_list = [*set(file_list)]
-    logging.info(clean_list)
+
+
+    print(clean_list)
     try:
         g = Github(app_settings.git_token)
 

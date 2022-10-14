@@ -65,9 +65,9 @@ async def cluster_details(cluster_name: str, row_count: int = 100):
 @router.get("/urls/", response_model=abm_url_list)
 async def testing_cluster_details(cluster_name: str):
     canned_urls = abm_url_list(
-        store_pages=["http://104.198.3.165/","http://34.168.57.77/restaurant"],
-        monitoring_dashboar="http://34.82.239.219:3000/",
-        metrics_endpoint = "http://35.193.141.59:8080/"  )
+        pages = ["http://34.145.81.45/","http://34.168.57.77/restaurant"],
+        dashboard = "http://34.82.239.219:3000/",
+        endpoint = "http://35.193.141.59:8080/"  )
     return canned_urls
 
 @router.get("/nodes/", response_model=List[AbmNode])

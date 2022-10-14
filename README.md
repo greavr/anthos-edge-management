@@ -9,7 +9,7 @@ source venv/bin/activate
 pip3 install -r src/requirements.txt
 export GCP_PROJECT=$(gcloud config get-value project)
 export SOURCE_REPO="https://github.com/greavr/anthos-edge-acm"
-export VM_IMAGE_BUCKET="gs://rgreaves-gke-chaos-kubevirt"
+export VM_IMAGE_BUCKET="https://storage.googleapis.com/rgreaves-gke-chaos-kubevirt"
 python3 src/main.py
 ```
 Then you can browse the code [localhost:8080](http://localhost:8080).<br /><br />

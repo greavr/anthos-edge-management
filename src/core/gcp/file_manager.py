@@ -8,8 +8,6 @@ import os
 import shutil
 import logging
 
-
-
 def create_selector(selector_name: str, match_labels: Dict[str, str]):
     """ This function creates a cluster config selector and add its to the git repo"""
     "Format for the selector can be found here: https://cloud.google.com/anthos-config-management/docs/how-to/clusterselectors#cluster-configs"
@@ -198,3 +196,107 @@ def cleanup_local_folder() -> bool:
 
     return result
 
+def create_data_volume(image_path: str, selector: str, disk_size: str = "10G") -> str:
+    """ Create DataVolume file contents """
+
+    outputFile = {
+        "apiVersion": "vm.cluster.gke.io/v1",
+        "kind": "VirtualMachineDisk",
+        "metadata": {
+            "annotations": {
+                "configmanagement.gke.io/cluster-selector": selector
+                },
+            "name": "vm-disk"
+        },
+        "spec": {
+            "size": disk_size ,
+            "storageClassName": "local-disks",
+            "source": {
+                "https": {
+                    "url": image_path
+                }
+            }
+        }
+    }
+
+    return outputFile
+
+def create_vm(vm_name: str, selector: str, parameters:str = "") -> str:
+    """ This function returns vm yaml"""
+
+    # Establish OS type
+    if "windows" in vm_name.lower():
+        os_type = "Windows"
+    else:
+        os_type = "linux"
+
+    outputfile = {
+        "apiVersion": "vm.cluster.gke.io/v1",
+        "kind": "VirtualMachine",
+        "metadata": {
+            "annotations": {
+                "configmanagement.gke.io/cluster-selector": selector
+                },
+            "name": vm_name,
+        },
+        "spec": {
+            "osType": os_type,
+            "compute": {
+                "cpu": {
+                    "vcpus": "2"
+                    },
+                "memory": {
+                    "capacity": "2GiB"
+                    }
+                },
+            "disks": [{
+                "boot": "true",
+                "virtualMachineDiskName": "vm-disk"
+        }]
+        }
+    }
+
+    return outputfile
+
+def creat_vm_file(vm_name: str, target_cluster: str, parameter_set: str = "") -> bool:
+    """ This function creates VM Manifest file and adds to repo"""
+    vm_image_path = vm_name
+    vm_parameters = parameter_set
+
+    result = False
+
+    try:
+        # Create Deployment variables
+        vm_file_name = f"{target_cluster}-{vm_name}".lower().replace("_", "-") #Cleaner file name
+
+        # Get vm image name
+        for a_vm in app_settings.vm_machine_list:
+            if vm_name == a_vm.name:
+                vm_image_path = a_vm.image_path
+
+        # Get Parameter set
+        for a_parameter_set in app_settings.vm_parameters:
+            if parameter_set == a_parameter_set.name:
+                vm_parameters = a_parameter_set.values
+
+        # Selector
+        vm_selector = f"{target_cluster}-sel"
+
+        # Create YAML
+        data_volume = yaml.dump(create_data_volume(image_path=vm_image_path,selector=vm_selector))
+        vm_file = yaml.dump(create_vm(vm_name=vm_name,selector=vm_selector,parameters=vm_parameters))
+        combined_file = data_volume + "\n---\n" + vm_file
+        print(combined_file)
+
+        add_to_git_file = [create_repo_file(file_name=f"{vm_file_name}.yaml",file_contents=combined_file, basefolder="vms")]
+        git_added_files = git.add_file_to_branch(file_list=add_to_git_file)
+        print(git_added_files)
+        cleanup_local_folder()
+
+        # Return result
+        result = True
+    except Exception as e:
+        logging.error(e)
+        print(e)
+
+    return result
