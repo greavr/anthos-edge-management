@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 
 from core.settings import app_settings
-from core.gcp import file_manager
+from core.gcp import file_manager, git
 
 from models.vm import vm_parameter_set, vm_image, vm_info
 
@@ -46,7 +46,12 @@ async def create_vm(vm_image_name: str, cluster_name: str, vm_parameterset_name:
 })
 async def remove_vm(vm_image_name: str, cluster_name: str):
     """ This function creates a virtual machine instance """
-    return {"status":"success"}
+    file_to_remove = f"/vms/{cluster_name}-{vm_image_name}.yaml".lower().replace("_", "-")
+
+    if git.delete_repo_file(file_to_remove):
+        return {"status":"success"}
+    else:
+        raise HTTPException(status_code=500, detail=f"Unable To Remove VM")
 
 @router.get("/image_list", response_model=List[vm_image])
 async def image_list():

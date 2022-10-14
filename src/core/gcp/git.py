@@ -123,7 +123,7 @@ def delete_repo_file(target_file: str = "") -> bool:
         g = Github(app_settings.git_token)
         repo = g.get_repo(urlparse(app_settings.source_repo).path[1:])
 
-        contents = repo.get_contents(target_file)
+        contents = [repo.get_contents(target_file)]
         print(contents)
         while contents:
             file_content = contents.pop(0)

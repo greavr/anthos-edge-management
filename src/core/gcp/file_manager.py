@@ -286,11 +286,9 @@ def creat_vm_file(vm_name: str, target_cluster: str, parameter_set: str = "") ->
         data_volume = yaml.dump(create_data_volume(image_path=vm_image_path,selector=vm_selector))
         vm_file = yaml.dump(create_vm(vm_name=vm_name,selector=vm_selector,parameters=vm_parameters))
         combined_file = data_volume + "\n---\n" + vm_file
-        print(combined_file)
 
         add_to_git_file = [create_repo_file(file_name=f"{vm_file_name}.yaml",file_contents=combined_file, basefolder="vms")]
         git_added_files = git.add_file_to_branch(file_list=add_to_git_file)
-        print(git_added_files)
         cleanup_local_folder()
 
         # Return result
