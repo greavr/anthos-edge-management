@@ -150,8 +150,11 @@ def rebuild_clusters(cluster_list: List[Abm]) -> List[str]:
     git_added_files = []
 
     try: 
+        # Clean Git repo
+        print(f"Clean repo result: {git.delete_repo_file()}")
+
         # Create Default apps
-        git_file_to_create = git.get_file_contents()
+        git_file_to_create = git.get_copy_from_file_contents()
         for key,value in git_file_to_create.items():
             file_list.append(create_repo_file(file_name=key, file_contents=value))
 
@@ -163,6 +166,9 @@ def rebuild_clusters(cluster_list: List[Abm]) -> List[str]:
 
             # location selector
             file_list.append(create_selector(selector_name=f"{aCluster.name}-sel", match_labels={"loc":aCluster.labels["loc"]}))
+
+            # blank selector
+            file_list.append(create_selector(selector_name=f"blank-sel", match_labels={"loc":"BLANK"}))
             
             # per-label selector
             for key, value in aCluster.labels.items():

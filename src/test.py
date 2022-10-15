@@ -8,8 +8,7 @@ helper.build_vm_info()
 # Build Policy List
 helper.build_policy_list()
 labels = {
-    "continent": ["asia", "europe", "australia"],
-    "canary": ["10", "25", "50"],
+    "canary": ["10"],
 }
 
-print(file_manager.create_policy(policy_name="require-repo-is-gcr",target_labels=labels))
+print(acm.update_application(labels=labels,app_name="pos_v1"))

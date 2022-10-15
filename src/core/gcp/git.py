@@ -4,7 +4,6 @@ from pathlib import Path
 from github import Github
 from urllib.parse import urlparse
 
-
 from core.settings import app_settings
 
 def get_repos():
@@ -27,8 +26,29 @@ def get_branches(repo_name: str):
         print(branch)
         print(branch.name)
 
+def get_contents(file_path: str) -> str:
+    """ This function returns the contents of a file on git"""
+    result = None
+    try:
+        g = Github(app_settings.git_token)
+
+        repo_name = urlparse(app_settings.source_repo).path[1:]
+        logging.debug(f"Repo name: {repo_name}")
+
+        repo = g.get_repo(repo_name)
+
+        contents = repo.get_contents(file_path)
+
+        result = contents.decoded_content.decode('utf-8')
+
+    except Exception as e:
+                logging.error(e)
+                print(e)
+
+    return result
+
 def check_file(file_path: str) -> str:
-    """ This functino checks if the file exists in git, if so returns the SHA"""
+    """ This function checks if the file exists in git, if so returns the SHA"""
 
     result = None
     try:
@@ -97,7 +117,7 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
 
     return uploaded_files
 
-def get_file_contents() -> dict[str,str]:
+def get_copy_from_file_contents() -> dict[str,str]:
     """ This function returns a list of files and their contents from the repo"""
 
     file_list = {}
@@ -123,7 +143,11 @@ def delete_repo_file(target_file: str = "") -> bool:
         g = Github(app_settings.git_token)
         repo = g.get_repo(urlparse(app_settings.source_repo).path[1:])
 
-        contents = [repo.get_contents(target_file)]
+        if target_file:
+            contents = [repo.get_contents(target_file)]
+        else:
+            contents = repo.get_contents(target_file)
+
         print(contents)
         while contents:
             file_content = contents.pop(0)

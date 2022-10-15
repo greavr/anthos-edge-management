@@ -78,4 +78,6 @@ async def apply_policy(labels: dict ,app_version: str = "", policy_name: str = "
         else:
             return {"status": "success", }
 
+    # Update app_version
+
     return {"status": "success", }
