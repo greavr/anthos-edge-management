@@ -9,6 +9,7 @@ from models.abm import Abm
 from models.logs import abm_log_item
 from models.urls import abm_url_list
 from models.abm_node import AbmNode
+from models.vm import vm_info
 
 #APIRouter creates path operations for abm module
 router = APIRouter(
@@ -21,7 +22,7 @@ router = APIRouter(
 async def list_of_abm_clusters():
     """ Function returns list of Anthos Baremetal Clusters in the project: TESTING - ALWAYS SUCCESS """  
     canned_values = []
-    gcp_regions = ["asia-east1","asia-east2","asia-northeast1","asia-northeast2","asia-northeast3","asia-south1","asia-south2","asia-southeast1","asia-southeast2","australia-southeast1","australia-southeast2","europeentral2","europe-north1","europe-southwest1","europe-west1-d","europe-west2","europe-west3","europe-west4","europe-west6","europe-west8","europe-west9","northamerica-northeast1","northamerica-northeast2","southamerica-east1","southamerica-west1","usentral1","us-east1-d","us-east4","us-east5","us-south1","us-west1","us-west2","us-west3","us-west4"]
+    gcp_regions = ["asia-east1","asia-east2","asia-northeast1","asia-northeast2","asia-northeast3","asia-south1","asia-south2","asia-southeast1","asia-southeast2","australia-southeast1","australia-southeast2","europe-central2","europe-north1","europe-southwest1","europe-west1-d","europe-west2","europe-west3","europe-west4","europe-west6","europe-west8","europe-west9","northamerica-northeast1","northamerica-northeast2","southamerica-east1","southamerica-west1","us-central1","us-east1-d","us-east4","us-east5","us-south1","us-west1","us-west2","us-west3","us-west4"]
 
     for a_region in gcp_regions:
         nodes = random.randint(2, 9)
@@ -93,4 +94,20 @@ async def node_list(cluster_name: str, location:str):
 })
 async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
     """ Update Cluster URLS : TESTING - ALWAYS SUCCESS"""
+    return {"status":"success"}
+
+
+@router.post("/set-vmlist/", responses={
+    200: {
+        "description": "Update Cluster VMs : TESTING - ALWAYS SUCCESS",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable to Update Cluster VMs"}
+})
+async def set_services(cluster_name: str, vm_info: List[vm_info]):
+    """ This Function saves list of VMs from inside cluster : TESTING - ALWAYS SUCCESS"""
     return {"status":"success"}

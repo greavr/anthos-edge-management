@@ -1,7 +1,8 @@
+from asyncore import file_dispatcher
 from fastapi import APIRouter, HTTPException
 from typing import List
 
-from core.gcp import acm
+from core.gcp import acm, file_manager
 from models.acm import Policy
 from core.settings import app_settings
 
@@ -61,11 +62,20 @@ async def application_list():
     },
     500: {"description": "Unable to apply policy"}
 })
-async def apply_policy(target_labels: dict ,application_name: str = "NA", policy_name: str = "NA"):
+async def apply_policy(labels: dict ,app_version: str = "", policy_name: str = ""):
     """ Apply Policy with labels. Body is made of Key : Value pairing of cluster labels.
-    Defaults to using 'all' selector if no key:value pair set for target_labels"""
+    Defaults to using 'all' selector if no key:value pair set for labels"""
 
-    if application_name == policy_name:
-        raise HTTPException(status_code=418, detail="Missing either 'application_name' or 'policy_name'.")
-        
+    if app_version == policy_name:
+        raise HTTPException(status_code=418, detail="Missing either 'app_version' or 'policy_name'.")
+    
+    # Apply Policy
+    if policy_name:
+        result = file_manager.create_policy(policy_name=policy_name, target_labels=labels)
+
+        if not result:
+            raise HTTPException(status_code=500, detail=f"Unable to create policy file")
+        else:
+            return {"status": "success", }
+
     return {"status": "success", }

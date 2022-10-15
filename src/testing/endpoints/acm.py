@@ -61,11 +61,11 @@ async def policy_list():
     },
     500: {"description": "Unable to apply policy"}
 })
-async def apply_policy(target_labels: dict ,application_name: str = "NA", policy_name: str = "NA"):
+async def apply_policy(labels: dict ,app_version: str = "", policy_name: str = ""):
     """ Apply Policy with labels. Body is made of Key : Value pairing of cluster labels.
-    Defaults to using 'all' selector if no key:value pair set for target_labels : TESTING - ALWAYS SUCCESS"""
+    Defaults to using 'all' selector if no key:value pair set for labels  : TESTING - ALWAYS SUCCESS"""
 
-    if application_name == policy_name:
-        raise HTTPException(status_code=418, detail="Missing either 'application_name' or 'policy_name'.")
+    if app_version == policy_name:
+        raise HTTPException(status_code=418, detail="Missing either 'app_version' or 'policy_name'.")
         
     return {"status": "success", }

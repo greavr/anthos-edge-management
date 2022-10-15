@@ -6,7 +6,7 @@ class Policy(BaseModel):
     name: str
     version: str
     details: str
-    content: str
+    content: dict
 
     def __repr__(self):
         return f"""name: {self.name},

@@ -7,5 +7,9 @@ helper.build_vm_info()
 
 # Build Policy List
 helper.build_policy_list()
+labels = {
+    "continent": ["asia", "europe", "australia"],
+    "canary": ["10", "25", "50"],
+}
 
-print(file_manager.creat_vm_file(vm_name="Windows_10",target_cluster="abm-europe-west1", parameter_set="windows_10_a"))
+print(file_manager.create_policy(policy_name="require-repo-is-gcr",target_labels=labels))

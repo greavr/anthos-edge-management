@@ -237,7 +237,7 @@ def create_vm(vm_name: str, selector: str, parameters:str = "") -> str:
             "annotations": {
                 "configmanagement.gke.io/cluster-selector": selector
                 },
-            "name": vm_name,
+            "name": vm_name.lower(),
         },
         "spec": {
             "osType": os_type,
@@ -297,4 +297,40 @@ def creat_vm_file(vm_name: str, target_cluster: str, parameter_set: str = "") ->
         logging.error(e)
         print(e)
 
+    return result
+
+def create_policy(policy_name: str, target_labels: dict) -> bool:
+    """" This function creates new policy doc and selector then uploads it to GIT """
+
+    result = False
+
+    try:
+        # First lookup the policy contents
+        for a_policy in app_settings.acm_policy_list:
+                if policy_name == a_policy.name:
+                    policy_doc = a_policy.content
+
+        # Build Selectors
+        selector_list = []
+        # Itterate over label name
+        for a_label in target_labels:
+            # Itterate over label values
+            for a_value in target_labels[a_label]:
+                selector_list.append(f"{a_label}-{a_value}-sel")
+
+        # Add In Selectors
+        policy_doc['metadata']['annotations']['configsync.gke.io/cluster-selector'] = ",".join(selector_list)
+        # Remove Descriptions
+        del policy_doc['metadata']['description']
+
+        add_to_git_file = [create_repo_file(file_name=f"{policy_name}.yaml",file_contents=yaml.dump(policy_doc), basefolder="policy")]
+        git_added_files = git.add_file_to_branch(file_list=add_to_git_file)
+        cleanup_local_folder()
+
+        # Return result
+        result = True
+    except Exception as e:
+        logging.error(e)
+        print(e)
+    
     return result

@@ -7,6 +7,7 @@ from models.abm import Abm
 from models.logs import abm_log_item
 from models.urls import abm_url_list
 from models.abm_node import AbmNode
+from models.vm import vm_info
 
 
 #APIRouter creates path operations for abm module
@@ -20,7 +21,6 @@ router = APIRouter(
 async def list_of_abm_clusters():
     """ Function returns list of Anthos Baremetal Clusters in the project"""
     return gcp.get_abm_list()
-
 
 @router.get("/logs/", response_model=List[abm_log_item])
 async def cluster_details(cluster_name: str, row_count: int = 100):
@@ -73,3 +73,19 @@ async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
         raise HTTPException(status_code=500, detail=f"Unable To Update Token")
     else:
         return {"status":"success"}
+
+
+@router.post("/set-vmlist/", responses={
+    200: {
+        "description": "Update Cluster URLS",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable to Update Cluster URLS"}
+})
+async def set_services(cluster_name: str, vm_info: List[vm_info]):
+    """ This Function saves list of VMs from inside cluster"""
+    pass

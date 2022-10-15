@@ -3,6 +3,8 @@ kind: K8sReplicaLimits
 metadata:
   name: replica-limits
   description: "Requires that objects with the field spec.replicas (Deployments, ReplicaSets, etc.) specify a number of replicas within defined ranges."
+  annotations:
+    configsync.gke.io/cluster-selector: BLANK
 spec:
   match:
     kinds:

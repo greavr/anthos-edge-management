@@ -3,6 +3,8 @@ kind: K8sContainerLimits
 metadata:
   name: container-must-have-limits
   description: "Requires containers to have memory and CPU limits set and constrains limits to be within the specified maximum values. https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+  annotations:
+    configsync.gke.io/cluster-selector: BLANK
 spec:
   match:
     kinds:

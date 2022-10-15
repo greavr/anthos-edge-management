@@ -6,8 +6,6 @@ import cachetools.func
 from google.cloud import gkehub_v1
 
 from core.settings import app_settings
-from models import abm
-from models.abm import Abm
 from core.gcp import file_manager, gcp
 
 @cachetools.func.ttl_cache(maxsize=128, ttl=5)
@@ -98,4 +96,3 @@ def build_repo() -> bool:
     #     print(e)
 
     return result
-

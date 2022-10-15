@@ -89,7 +89,7 @@ def build_policy_list():
                     name=str(read_data["metadata"]["name"]),
                     version="1.0",
                     details=str(read_data["metadata"]["description"]),
-                    content=str(read_data)
+                    content=read_data
                 )
 
             results.append(this_policy)
