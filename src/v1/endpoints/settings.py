@@ -1,9 +1,8 @@
 from fastapi import APIRouter, HTTPException
+from typing import List
 from core.settings import app_settings
 from core.gcp import gcp, acm, git
 import json
-
-from models.urls import fleet_url_list
 
 #APIRouter creates path operations for abm module
 router = APIRouter(
@@ -132,7 +131,7 @@ async def delete_repo_file(file_to_remove: str = ""):
     else:
         return {"status": "success","file":file_to_remove }
 
-@router.get("/fleet-monitoring", response_model=fleet_url_list)
+@router.get("/fleet-monitoring", response_model=List[str])
 async def show_monitoring_urls():
     """ This function returns list of fleet monitoring metrics """
     return app_settings.fleet_monitoring_urls
@@ -148,14 +147,10 @@ async def show_monitoring_urls():
     },
     500: {"description": "Unable To fleet-monitoring urls"}
 })
-async def set_fleet_Urls(fleet_urls: fleet_url_list):
+async def set_fleet_Urls(fleet_urls: List[str]):
     """ Updates the git token, and stores it in the secrets vault """
-    save_value = {}
-    save_value["overview"] = fleet_urls.overview
-    save_value["resources"] = fleet_urls.resources
-    
-    print (json.dumps(save_value))
-    result = gcp.set_secret_value(secret_name="fleet_urls", secret_value=json.dumps(save_value))
+    print (json.dumps(fleet_urls))
+    result = gcp.set_secret_value(secret_name="fleet_urls", secret_value=json.dumps(fleet_urls))
 
     # Successfully written
     if not result: 
