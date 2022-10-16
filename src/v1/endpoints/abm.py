@@ -86,6 +86,28 @@ async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
     },
     500: {"description": "Unable to Update Cluster URLS"}
 })
-async def set_services(cluster_name: str, vm_info: List[vm_info]):
+async def set_vm_list(cluster_name: str, vm_info: List[vm_info]):
     """ This Function saves list of VMs from inside cluster"""
-    pass
+    save_set = json.loads(gcp.get_secret_value(secret_name="vm-list"))
+
+    for a_vm in vm_info:
+        save_value = {}
+        save_value["cluster_name"] = cluster_name
+        save_value["vm_name"] =  a_vm.vm_name
+        save_value["vm_ip"] = a_vm.vm_ip
+        save_value["vm_status"] = a_vm.vm_status
+        save_value["vm_image_name"] = a_vm.vm_image_name
+        save_value["vm_parameter_set_name"] = a_vm.vm_parameter_set_name
+        save_set.append(save_value)
+
+    # Clean Up list
+    while("" in save_set):
+        save_set.remove("")
+    
+    result = gcp.set_secret_value(secret_name="vm-list", secret_value=json.dumps(save_set))
+
+    # Successfully written
+    if not result: 
+        raise HTTPException(status_code=500, detail=f"Unable To Update VM-list")
+    else:
+        return {"status":"success"}

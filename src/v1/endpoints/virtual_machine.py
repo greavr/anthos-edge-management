@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
+import json
 
 from core.settings import app_settings
-from core.gcp import file_manager, git
+from core.gcp import file_manager, git, gcp
 
 from models.vm import vm_parameter_set, vm_image, vm_info
 
@@ -64,6 +65,22 @@ async def parameter_list():
     return app_settings.vm_parameters
 
 @router.get("/vm_list", response_model=List[vm_info])
-async def parameter_list():
+async def vm_list():
     """ This function returns a list of VMs running in the entire fleet"""
-    return []
+    raw_data = json.loads(gcp.get_secret_value(secret_name="vm-list"))
+    result_vms = []
+
+    # Value foudn lookup value
+    if raw_data:
+        for a_vm in raw_data:
+            this_set = vm_info(
+                cluster_name=a_vm["cluster_name"],
+                vm_name=a_vm["vm_name"],
+                vm_ip=a_vm["vm_ip"],
+                vm_status=a_vm["vm_status"],
+                vm_parameter_set_name=a_vm["vm_parameter_set_name"],
+                vm_image_name = a_vm["vm_image_name"])
+            result_vms.append(this_set)
+    
+    # Return result
+    return result_vms
