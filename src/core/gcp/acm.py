@@ -51,7 +51,7 @@ def call_acm():
                 status = str(status_code)
 
             if data.configmanagement.config_sync_state.sync_state.last_sync:
-                last_update = datetime.strptime(data.configmanagement.config_sync_state.sync_state.last_sync, '%Y-%m-%d %H:%M:%S %z %Z')
+                last_update = str(data.configmanagement.config_sync_state.sync_state.last_sync)
             else:
                 last_update = ""
 
