@@ -11,7 +11,7 @@ from core.helper import helper
 from models.abm import Abm
 
 ## List Anthos GKE Clusters
-@cachetools.func.ttl_cache(maxsize=128, ttl=5)
+@cachetools.func.ttl_cache(maxsize=128, ttl=15)
 def get_abm_list() -> List[Abm]:
     """Return list of kubernetes clusters registered in Anthos. Returns Array of cluster and instances"""
 

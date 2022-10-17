@@ -73,6 +73,7 @@ def acm_status(which_cluser_name: str) -> List[str]:
 
     # Itterate through values
     for aCluster in app_settings.acm_status:
+        print(aCluster["cluster"])
         if aCluster["cluster"] == which_cluser_name:
             # Matching cluster
             cluster_list = [aCluster["status"],aCluster["last_update"]]
