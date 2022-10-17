@@ -3,6 +3,8 @@ kind: K8sRestrictRoleBindings
 metadata:
   name: restrict-clusteradmin-rolebindings-sample
   description: "Restricts the subjects specified in ClusterRoleBindings and RoleBindings to a list of allowed subjects."
+  annotations:
+    configmanagement.gke.io/cluster-selector: ""
 spec:
   enforcementAction: dryrun
   parameters:
