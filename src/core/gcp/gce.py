@@ -78,4 +78,30 @@ def get_instance_list(location: str, cluster_name: str = "") -> List[AbmNode]:
 
     return all_instances
 
+@cachetools.func.ttl_cache(maxsize=128, ttl=15)
+def build_instance_ip_list():
+    """ This function looks up instance public ip for named instance"""
+    compute_client = compute_v1.InstancesClient()
+    
+    # Build Zone List
+    try:
+        zone_client = compute_v1.ZonesClient()
+        zone_results = zone_client.list(project=app_settings.gcp_project)
+        zone_list = []
+        for a_zone in zone_results:
+            zone_list.append(a_zone.name)
+        
+        print(zone_list)
+    except Exception as e:
+        logging.error(e)
 
+    for a_zone in zone_list:
+        try:
+            instance_list = compute_client.list(project=app_settings.gcp_project, zone=a_zone)
+            for instance in instance_list:
+                instance_ip = instance.network_interfaces[0].access_configs[0].nat_i_p
+                app_settings.node_list[instance.name] = instance_ip
+        except Exception as e:
+            logging.info(e)
+
+    return app_settings.node_list

@@ -3,12 +3,12 @@ from typing import List
 
 class abm_url_list(BaseModel):
     """ABM Cluster Urls"""
-    pages: List[str] = [""]
+    pos: str = ""
     dashboard: str = ""
-    endpoint: str = ""
+    grafana: str = ""
 
     def __repr__(self):
         return f"""
-            pages: {self.pages},
+            pos: {self.pos},
             dashboard: {self.dashboard},
-            metrics: {self.endpoint}"""
+            metrics: {self.grafana}"""

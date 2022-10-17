@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     acm_policy_list: List[Policy] = []
     fleet_monitoring_urls: List[str] = []
     acm_status = []
+    node_list = {}
 
     def lookup_values(self):
         """Function to lookup git values"""

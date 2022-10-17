@@ -1,7 +1,7 @@
 from datetime import datetime
 import random
 from fastapi import APIRouter
-from typing import List
+from typing import List, Dict
 
 from core.helper import helper
 
@@ -66,9 +66,9 @@ async def cluster_details(cluster_name: str, row_count: int = 100):
 @router.get("/urls/", response_model=abm_url_list)
 async def testing_cluster_details(cluster_name: str):
     canned_urls = abm_url_list(
-        pages = ["http://34.145.81.45/","http://34.168.57.77/restaurant"],
+        grafana = "http://34.82.239.219:3000/",
         dashboard = "http://34.82.239.219:3000/",
-        endpoint = "http://35.193.141.59:8080/"  )
+        pos = "http://35.193.141.59:8080/rotf"  )
     return canned_urls
 
 @router.get("/nodes/", response_model=List[AbmNode])
@@ -111,3 +111,8 @@ async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
 async def set_services(cluster_name: str, vm_info: List[vm_info]):
     """ This Function saves list of VMs from inside cluster : TESTING - ALWAYS SUCCESS"""
     return {"status":"success"}
+
+@router.get("/complete-node-list")
+async def list_all_nodes():
+    """ Function returns list of Anthos Baremetal Clusters in the project"""
+    return {}

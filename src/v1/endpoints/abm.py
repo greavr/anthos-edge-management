@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from typing import List
+from typing import Dict, List
 import json
 
 from core.gcp import gcp, logging, gce
@@ -9,6 +9,7 @@ from models.urls import abm_url_list
 from models.abm_node import AbmNode
 from models.vm import vm_info
 
+from core.settings import app_settings
 
 #APIRouter creates path operations for abm module
 router = APIRouter(
@@ -36,9 +37,9 @@ async def cluster_details(cluster_name: str):
     # Value foudn lookup value
     if raw_data:
         url_list = json.loads(raw_data)
-        result_url_list.endpoint = url_list["endpoint"]
+        result_url_list.grafana = url_list["grafana"]
         result_url_list.dashboard = url_list["dashboard"]
-        result_url_list.pages = url_list["pages"]
+        result_url_list.pos = url_list["pos"]
     
     # Return result
     return result_url_list
@@ -62,9 +63,9 @@ async def node_list(cluster_name: str, location:str):
 async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
     """ Update Cluster URLS"""
     save_value = {}
-    save_value["pages"] = url_list.pages
+    save_value["pos"] = url_list.pos
     save_value["dashboard"] =  url_list.dashboard
-    save_value["endpoint"] = url_list.endpoint
+    save_value["grafana"] = url_list.grafana
 
     result = gcp.set_secret_value(secret_name=cluster_name, secret_value=json.dumps(save_value))
 
@@ -111,3 +112,9 @@ async def set_vm_list(cluster_name: str, vm_info: List[vm_info]):
         raise HTTPException(status_code=500, detail=f"Unable To Update VM-list")
     else:
         return {"status":"success"}
+
+@router.get("/complete-node-list")
+async def list_all_nodes():
+    """ Function returns list of Anthos Baremetal Clusters in the project"""
+    gce.build_instance_ip_list()
+    return app_settings.node_list
