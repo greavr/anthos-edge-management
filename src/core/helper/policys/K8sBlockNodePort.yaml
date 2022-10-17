@@ -3,8 +3,6 @@ kind: K8sBlockNodePort
 metadata:
   name: block-node-port
   description: "Disallows all Services with type NodePort. https://kubernetes.io/docs/concepts/services-networking/service/#nodeport"
-  annotations:
-    configsync.gke.io/cluster-selector: BLANK
 spec:
   match:
     kinds:

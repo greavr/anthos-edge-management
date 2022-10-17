@@ -325,7 +325,7 @@ def create_policy(policy_name: str, target_labels: dict) -> bool:
             for a_value in target_labels[a_label]:
                 this_file = policy_doc
                 selector_name = f"{a_label}-{a_value}-sel"
-                this_file['metadata']['annotations']['configsync.gke.io/cluster-selector'] = selector_name
+                this_file['metadata']['annotations']['configmanagement.gke.io/cluster-selector'] = selector_name
                 file_name = f"{policy_name}-{a_label}-{a_value}.yaml"
                 file_list.append(create_repo_file(file_name=file_name,file_contents=yaml.dump(this_file), basefolder="policy"))
 
