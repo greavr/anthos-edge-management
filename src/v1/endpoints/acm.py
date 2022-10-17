@@ -73,10 +73,13 @@ async def apply_policy(labels: dict ,app_version: str = "", policy_name: str = "
     if policy_name:
         result = file_manager.create_policy(policy_name=policy_name, target_labels=labels)
 
-        if not result:
-            raise HTTPException(status_code=500, detail=f"Unable to create policy file")
-        else:
-            return {"status": "success", }
+    if app_version:
+        result = acm.update_application(labels=labels, app_name=app_version)
+
+    if not result:
+        raise HTTPException(status_code=500, detail=f"Unable to create policy file")
+    else:
+        return {"status": "success", }
 
     # Update app_version
 

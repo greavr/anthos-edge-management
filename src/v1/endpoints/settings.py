@@ -156,5 +156,5 @@ async def set_fleet_Urls(fleet_urls: List[str]):
     if not result: 
         raise HTTPException(status_code=500, detail=f"Unable To fleet-monitoring urls")
     else:
-        app_settings.git_token = fleet_urls
+        app_settings.fleet_monitoring_urls = fleet_urls
         return {"status":"success"}

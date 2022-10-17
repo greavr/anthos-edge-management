@@ -69,6 +69,8 @@ def acm_status(which_cluser_name: str) -> List[str]:
     """ This function returns a list of clusters, with current ACM status """
     cluster_list = ["NOT_INSTALLED",""]
 
+    call_acm()
+
     # Itterate through values
     for aCluster in app_settings.acm_status:
         if aCluster["cluster"] == which_cluser_name:
