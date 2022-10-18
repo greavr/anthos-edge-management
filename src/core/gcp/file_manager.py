@@ -249,14 +249,14 @@ def create_vm(vm_name: str, selector: str, parameters:str = "") -> str:
             "osType": os_type,
             "compute": {
                 "cpu": {
-                    "vcpus": "2"
+                    "vcpus": 2
                     },
                 "memory": {
                     "capacity": "2GiB"
                     }
                 },
             "disks": [{
-                "boot": "true",
+                "boot": True,
                 "virtualMachineDiskName": "vm-disk"
         }]
         }
