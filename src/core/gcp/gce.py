@@ -3,9 +3,12 @@ from datetime import datetime
 import cachetools.func
 from typing import List
 import logging
+import threading
 
 from core.settings import app_settings
 from models.abm_node import AbmNode
+
+from core.gcp import gcp
 
 ## Disable Instance
 def stop_instance(instance_name: str, instance_zone: str) -> bool:
@@ -46,7 +49,7 @@ def start_instance(instance_name: str, instance_zone: str) -> bool:
     return False
 
 # Get Instance List
-@cachetools.func.ttl_cache(maxsize=128, ttl=5)
+@cachetools.func.ttl_cache(maxsize=1024, ttl=60)
 def get_instance_list(location: str, cluster_name: str = "") -> List[AbmNode]:
     """ Function returns a filtered list of instance per-cluster """
     compute_client = compute_v1.InstancesClient()
@@ -78,24 +81,13 @@ def get_instance_list(location: str, cluster_name: str = "") -> List[AbmNode]:
 
     return all_instances
 
-@cachetools.func.ttl_cache(maxsize=128, ttl=15)
 def build_instance_ip_list():
     """ This function looks up instance public ip for named instance"""
     compute_client = compute_v1.InstancesClient()
-    
-    # Build Zone List
-    try:
-        zone_client = compute_v1.ZonesClient()
-        zone_results = zone_client.list(project=app_settings.gcp_project)
-        zone_list = []
-        for a_zone in zone_results:
-            zone_list.append(a_zone.name)
-        
-        print(zone_list)
-    except Exception as e:
-        logging.error(e)
+    print("Building Instance list")
 
-    for a_zone in zone_list:
+    # Build Instance List
+    for a_zone in app_settings.zone_list:
         try:
             instance_list = compute_client.list(project=app_settings.gcp_project, zone=a_zone)
             for instance in instance_list:
@@ -103,5 +95,18 @@ def build_instance_ip_list():
                 app_settings.node_list[instance.name] = instance_ip
         except Exception as e:
             logging.info(e)
+
+@cachetools.func.ttl_cache(maxsize=1024, ttl=60)
+def return_instance_ip_list():
+    """" This function returns list of GCE instances"""
+
+    # If first time
+    if not app_settings.node_list:
+        print("First time building")
+        build_instance_ip_list()
+    else:
+        print("Background Thread")
+        x = threading.Thread( target=build_instance_ip_list, args=())
+        x.start
 
     return app_settings.node_list

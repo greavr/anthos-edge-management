@@ -1,5 +1,6 @@
 from google.cloud import gkehub_v1
 from google.cloud import secretmanager
+from google.cloud import compute_v1
 import cachetools.func
 import logging
 from datetime import datetime
@@ -138,4 +139,27 @@ def get_secret_value(secret_name: str) -> str:
     # Return the decoded payload.
     return result
 
+def get_zones():
+    """ This function builds a list of Google Cloud Zones"""
 
+    # If popuplate already return current value
+    if app_settings.zone_list:
+        print("Using existing zone list")
+        return app_settings.zone_list
+
+    # Build list
+    try:
+        print("Building Zone List")
+        zone_client = compute_v1.ZonesClient()
+        zone_results = zone_client.list(project=app_settings.gcp_project)
+        zone_list = []
+        for a_zone in zone_results:
+            zone_list.append(a_zone.name)
+        
+        app_settings.zone_list =zone_list
+    except Exception as e:
+        logging.error(e)
+    
+    # Return happy list
+    return app_settings.zone_list
+    

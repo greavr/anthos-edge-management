@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     fleet_monitoring_urls: List[str] = []
     acm_status = []
     node_list = {}
+    zone_list = {}
 
     def lookup_values(self):
         """Function to lookup git values"""

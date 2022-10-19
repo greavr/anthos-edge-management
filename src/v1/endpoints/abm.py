@@ -116,5 +116,5 @@ async def set_vm_list(cluster_name: str, vm_info: List[vm_info]):
 @router.get("/complete-node-list")
 async def list_all_nodes():
     """ Function returns list of Anthos Baremetal Clusters in the project"""
-    gce.build_instance_ip_list()
+    gce.return_instance_ip_list()
     return app_settings.node_list

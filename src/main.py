@@ -6,6 +6,7 @@ from v1.api import router as api_router
 from testing.api import router as testing_router
 
 from core.settings import app_settings
+from core.gcp import gcp
 import uvicorn
 
 #Start App
@@ -41,6 +42,9 @@ if __name__ == "__main__":
 
     # Build Policy List
     helper.build_policy_list()
+
+    #Build Zone List
+    gcp.get_zones()
 
     # Run Web App
     uvicorn.run(app, host="0.0.0.0", port=8080)
