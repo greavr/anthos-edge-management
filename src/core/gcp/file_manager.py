@@ -8,6 +8,10 @@ import os
 import shutil
 import logging
 
+def create_canarys():
+    """ This function creates the canary selectors for app rollout"""
+    pass
+
 def create_selector(selector_name: str, match_labels: Dict[str, str]):
     """ This function creates a cluster config selector and add its to the git repo"""
     "Format for the selector can be found here: https://cloud.google.com/anthos-config-management/docs/how-to/clusterselectors#cluster-configs"
@@ -227,7 +231,7 @@ def create_data_volume(image_path: str, selector: str, disk_size: str = "10G") -
 
     return outputFile
 
-def create_vm(vm_name: str, selector: str, parameters:str = "") -> str:
+def create_vm(vm_name: str, selector: str, parameters:str = ""):
     """ This function returns vm yaml"""
 
     # Establish OS type
