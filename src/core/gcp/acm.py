@@ -62,7 +62,6 @@ def call_acm():
 
     except Exception as e:
         logging.error(e)
-        print(e)
 
 @cachetools.func.ttl_cache(maxsize=128, ttl=1)
 def acm_status(which_cluser_name: str) -> List[str]:
@@ -73,12 +72,10 @@ def acm_status(which_cluser_name: str) -> List[str]:
 
     # Itterate through values
     for aCluster in app_settings.acm_status:
-        print(aCluster["cluster"])
         if aCluster["cluster"] == which_cluser_name:
             # Matching cluster
             cluster_list = [aCluster["status"],aCluster["last_update"]]
 
-    
     return cluster_list
 
 def build_repo() -> bool:
@@ -90,13 +87,12 @@ def build_repo() -> bool:
 
         # For each cluster create cluster registry file
         this_cluster_file = file_manager.rebuild_clusters(cluster_list=abm_list)
-        print(this_cluster_file)
+        logging.info(f"Creating file: {this_cluster_file}")
         
         # Done Adding files
         result = True
     except Exception as e:
         logging.error(e)
-        print(e)
 
     return result
 
@@ -168,4 +164,5 @@ def update_application(labels: dict, app_name: str) -> bool:
     file_manager.cleanup_local_folder()       
         
 
-    print(selected_clusters)
+    logging.debug(f"Selected clusters: {selected_clusters}")
+    logging.debug(f"Un-Selected clusters: {unselected_clusters}")

@@ -1,10 +1,13 @@
 from google.cloud import gkehub_v1
 from google.cloud import secretmanager
 from google.cloud import compute_v1
+
 import cachetools.func
 import logging
 from datetime import datetime
 from typing import List
+import threading
+import logging
 
 from core.gcp import acm    
 from core.settings import app_settings
@@ -15,6 +18,21 @@ from models.abm import Abm
 @cachetools.func.ttl_cache(maxsize=128, ttl=15)
 def get_abm_list() -> List[Abm]:
     """Return list of kubernetes clusters registered in Anthos. Returns Array of cluster and instances"""
+
+    if app_settings.abm_list:
+        logging.info("Using cache")
+        x = threading.Thread(target=build_abm_list, args=())
+        x.start()
+    else:
+        build_abm_list()
+
+    # Return values
+    return app_settings.abm_list
+
+def build_abm_list():
+    """ This creates a fresh list of ABM instances"""
+
+    logging.info("Rebuilding list")
 
     # Result List
     abm_list = []
@@ -52,7 +70,7 @@ def get_abm_list() -> List[Abm]:
             # Validate date / time
             if acm_update_time == "":
                 acm_update_time = datetime.now()
-            print(f"ACM STATUS: {this_acm_status}")
+            logging.info(f"ACM STATUS: {this_acm_status}")
 
             # Create new class
             thisAbm = Abm(
@@ -69,16 +87,14 @@ def get_abm_list() -> List[Abm]:
                 acm_status=acm_status_code,
                 acm_update_time=acm_update_time
             )
-            
 
-            logging.info(thisAbm)
             abm_list.append(thisAbm)
+            app_settings.abm_list = abm_list
+
+            logging.info("List Build Complete")
 
     except Exception as e:
         logging.error(e)
-        print(e)
-
-    return abm_list
 
 def set_secret_value(secret_name: str, secret_value: str) -> bool:
     """ This function updates the secret in the vault and updates the app_settings"""
@@ -99,7 +115,7 @@ def set_secret_value(secret_name: str, secret_value: str) -> bool:
         client.create_secret(secret_id=secret_name, parent=parent, secret=secret)
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     # Next try to add secret
     try:
@@ -111,7 +127,7 @@ def set_secret_value(secret_name: str, secret_value: str) -> bool:
 
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     # Return the decoded payload.
     return result
@@ -130,11 +146,10 @@ def get_secret_value(secret_name: str) -> str:
         # Access the secret version.
         response = client.access_secret_version(name=name)
         result = response.payload.data.decode('UTF-8')
-        print(result)
+        logging.info(result)
     
     except Exception as e:
         logging.error(e)
-        print(e)
 
     # Return the decoded payload.
     return result
@@ -144,12 +159,12 @@ def get_zones():
 
     # If popuplate already return current value
     if app_settings.zone_list:
-        print("Using existing zone list")
+        logging.info("Using existing zone list")
         return app_settings.zone_list
 
     # Build list
     try:
-        print("Building Zone List")
+        logging.debug("Building Zone List")
         zone_client = compute_v1.ZonesClient()
         zone_results = zone_client.list(project=app_settings.gcp_project)
         zone_list = []

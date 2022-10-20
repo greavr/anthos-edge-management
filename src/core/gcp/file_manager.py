@@ -61,7 +61,7 @@ def create_selector(selector_name: str, match_labels: Dict[str, str]):
 
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     # Return path to file
     return save_file
@@ -106,7 +106,7 @@ def create_cluster(cluster_name: str, labels: Dict[str,str]):
         logging.debug(yaml.dump(outputFile))
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     # Return path to file
     return save_file
@@ -141,7 +141,7 @@ def create_repo_file(file_name: str, file_contents: str, basefolder: str = "defa
 
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     return save_file    
 
@@ -155,7 +155,7 @@ def rebuild_clusters(cluster_list: List[Abm]) -> List[str]:
 
     try: 
         # Clean Git repo
-        print(f"Clean repo result: {git.delete_repo_file()}")
+        logging.info(f"Clean repo result: {git.delete_repo_file()}")
 
         # Create Default apps
         git_file_to_create = git.get_copy_from_file_contents()
@@ -189,7 +189,7 @@ def rebuild_clusters(cluster_list: List[Abm]) -> List[str]:
 
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
      
 
     return git_added_files
@@ -202,7 +202,6 @@ def cleanup_local_folder() -> bool:
         shutil.rmtree(app_settings.save_file_directory)
     except OSError as e:
         logging.error(e)
-        print ("Error: %s - %s." % (e.filename, e.strerror))
 
     return result
 
@@ -305,7 +304,7 @@ def creat_vm_file(vm_name: str, target_cluster: str, parameter_set: str = "") ->
         result = True
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     return result
 
@@ -342,6 +341,6 @@ def create_policy(policy_name: str, target_labels: dict) -> bool:
         result = True
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
     
     return result

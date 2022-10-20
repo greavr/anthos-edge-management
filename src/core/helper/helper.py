@@ -18,10 +18,10 @@ from models.acm import Policy
 def Configure_Logging():
     """ Function to build logging"""
     logging.basicConfig(level=logging.INFO)
-    # client = google.cloud.logging.Client()
-    # handler = CloudLoggingHandler(client)
-    # logging.getLogger().setLevel(logging.DEBUG)
-    # setup_logging(handler)
+    client = google.cloud.logging.Client()
+    handler = CloudLoggingHandler(client)
+    logging.getLogger().setLevel(logging.DEBUG)
+    setup_logging(handler)
 
 @cachetools.func.ttl_cache(maxsize=128, ttl=60)
 def lookup_location(gcp_region: str) -> Dict[str,str]:

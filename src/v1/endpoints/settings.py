@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, HTTPException
 from typing import List
 from core.settings import app_settings
@@ -30,7 +31,7 @@ router = APIRouter(
 })
 async def get_setting_value(setting_name: str = None):
     """ Returns setting(s) values, leaving it empty returns all values"""
-    print(setting_name)
+    logging.debug(f"Looking up setting value for: {setting_name}")
     
     result = {}
     # Check for setting name
@@ -149,8 +150,9 @@ async def show_monitoring_urls():
 })
 async def set_fleet_Urls(fleet_urls: List[str]):
     """ Updates the git token, and stores it in the secrets vault """
-    print (json.dumps(fleet_urls))
-    result = gcp.set_secret_value(secret_name="fleet_urls", secret_value=json.dumps(fleet_urls))
+    json_fleet_urls = json.dumps(fleet_urls)
+    logging.debug(f"Updating fleet urls: {json_fleet_urls}")
+    result = gcp.set_secret_value(secret_name="fleet_urls", secret_value=json_fleet_urls)
 
     # Successfully written
     if not result: 

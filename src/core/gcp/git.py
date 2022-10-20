@@ -10,21 +10,26 @@ def get_repos():
     g = Github(app_settings.git_token)
     repo_list = g.get_user().get_repos()
     for repo in repo_list:
-        print(repo)
-        print(f"{repo.full_name} - {repo.default_branch}")
+        logging.debug(repo)
+        logging.info(f"{repo.full_name} - {repo.default_branch}")
 
 
     return repo_list
 
-def get_branches(repo_name: str):
+def get_branches(repo_name: str) -> List[str]:
+    """ This function returns list of git branchs on the repo"""
     g = Github(app_settings.git_token)
     repo = g.get_repo(repo_name)
+
+    results = []
 
     branch_list = repo.get_branches()
 
     for branch in branch_list:
-        print(branch)
-        print(branch.name)
+        logging.debug(branch)
+        results.append(branch.name)
+
+    return results
 
 def get_contents(file_path: str) -> str:
     """ This function returns the contents of a file on git"""
@@ -43,7 +48,7 @@ def get_contents(file_path: str) -> str:
 
     except Exception as e:
                 logging.error(e)
-                print(e)
+                logging.error(e)
 
     return result
 
@@ -65,7 +70,7 @@ def check_file(file_path: str) -> str:
 
     except Exception as e:
                 logging.error(e)
-                print(e)
+                logging.error(e)
 
     return result
     
@@ -77,7 +82,7 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
     clean_list = [*set(file_list)]
 
 
-    print(clean_list)
+    logging.debug(clean_list)
     try:
         g = Github(app_settings.git_token)
 
@@ -109,11 +114,11 @@ def add_file_to_branch(file_list: List[str]) -> list[str]:
 
             except Exception as e:
                 logging.error(e)
-                print(e)
+                logging.error(e)
 
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     return uploaded_files
 
@@ -148,10 +153,10 @@ def delete_repo_file(target_file: str = "") -> bool:
         else:
             contents = repo.get_contents(target_file)
 
-        print(contents)
+        logging.debug(f"File contents: {contents}")
         while contents:
             file_content = contents.pop(0)
-            print(f"removing file: {file_content.name}")
+            logging.debug(f"removing file: {file_content.name}")
 
             # Ignore folder
             if file_content.type == "dir":
@@ -163,6 +168,6 @@ def delete_repo_file(target_file: str = "") -> bool:
         result = True
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     return result

@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException
 from core.settings import app_settings
 from core.gcp import gcp, acm, git
 
+import logging
+
 from typing import List
 
 #APIRouter creates path operations for abm module
@@ -30,7 +32,7 @@ router = APIRouter(
 })
 async def get_setting_value(setting_name: str = None):
     """ Returns setting(s) values, leaving it empty returns all values"""
-    print(setting_name)
+    logging.debug(f"Looking for setting: {setting_name}")
     
     result = {}
     # Check for setting name
