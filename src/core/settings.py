@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     acm_status = []
     node_list = {}
     zone_list = {}
+    abm_list = {}
 
     def lookup_values(self):
         """Function to lookup git values"""

@@ -25,7 +25,7 @@ def stop_instance(instance_name: str, instance_zone: str) -> bool:
         return True
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     return False
 
@@ -44,7 +44,7 @@ def start_instance(instance_name: str, instance_zone: str) -> bool:
         return True
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     return False
 
@@ -84,7 +84,7 @@ def get_instance_list(location: str, cluster_name: str = "") -> List[AbmNode]:
 def build_instance_ip_list():
     """ This function looks up instance public ip for named instance"""
     compute_client = compute_v1.InstancesClient()
-    print("Building Instance list")
+    logging.debug("Building Instance list")
 
     # Build Instance List
     for a_zone in app_settings.zone_list:
@@ -102,10 +102,10 @@ def return_instance_ip_list():
 
     # If first time
     if not app_settings.node_list:
-        print("First time building")
+        logging.debug("First time building instance list")
         build_instance_ip_list()
     else:
-        print("Background Thread")
+        logging.debug("Building instance list as Background Thread")
         x = threading.Thread( target=build_instance_ip_list, args=())
         x.start
 

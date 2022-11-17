@@ -32,7 +32,7 @@ def disable_network(cluster: str, location: str) -> bool:
 
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     return result
 
@@ -52,7 +52,7 @@ def enable_network(cluster: str) -> bool:
         result = True
     except Exception as e:
         logging.error(e)
-        print(e)
+        logging.error(e)
 
     return result
 
