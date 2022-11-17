@@ -9,6 +9,9 @@ from pathlib import Path
 
 import google.cloud.logging
 from google.cloud.logging.handlers import CloudLoggingHandler, setup_logging
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 from core.settings import app_settings
 from models.vm import vm_parameter_set, vm_image
@@ -17,7 +20,7 @@ from models.acm import Policy
 
 def Configure_Logging():
     """ Function to build logging"""
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     # client = google.cloud.logging.Client()
     # handler = CloudLoggingHandler(client)
     # logging.getLogger().setLevel(logging.DEBUG)
@@ -97,3 +100,9 @@ def build_policy_list():
 
     # Results
     app_settings.acm_policy_list = results
+
+def init_firebase():
+    """ This function initalizes firebase for the app"""
+    # Use the application default credentials.
+    cred = credentials.ApplicationDefault()
+    firebase_admin.initialize_app(cred)

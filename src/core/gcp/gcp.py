@@ -1,6 +1,10 @@
 from google.cloud import gkehub_v1
 from google.cloud import secretmanager
 from google.cloud import compute_v1
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
 import cachetools.func
 import logging
 from datetime import datetime
@@ -162,4 +166,37 @@ def get_zones():
     
     # Return happy list
     return app_settings.zone_list
+
+def set_firestore_value(value_name: str, value_to_save: dict, collection_name: str) -> bool:
+    """ This function saves values in datastore""" 
+    try: 
+        db = firestore.client()
+        logging.debug(f"Writing values to firestore in the project: {app_settings.gcp_project}")
+
+        # Save values
+        logging.debug(f"Saving the value: {value_to_save} to in {value_name}")
+        doc_ref = db.collection(collection_name).document(value_name)
+
+        # Update value
+        doc_ref.set(value_to_save)
+        return True
+    except Exception as e:
+        logging.exception(f"Unable to save to firestore. Value name: {value_name}, Value: {value_to_save}")
+        logging.exception(e)
+        return False
+
+@cachetools.func.ttl_cache(maxsize=128, ttl=5)
+def get_firestore_value(value_name: str, collection_name: str) -> dict:
+    """ this function looksup firestore value"""
+    db = firestore.client()
+    logging.debug(f"Looking up values to firestore in the project: {app_settings.gcp_project}")
     
+    # get values
+    logging.debug(f"Get the value for: {value_name}")
+    doc_ref = db.collection(collection_name).document(value_name)
+    doc = doc_ref.get().to_dict()
+
+    logging.debug(f"Found values: {doc}")
+    return(doc)
+
+

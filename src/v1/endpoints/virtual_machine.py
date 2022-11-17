@@ -67,12 +67,12 @@ async def parameter_list():
 @router.get("/vm_list", response_model=List[vm_info])
 async def vm_list():
     """ This function returns a list of VMs running in the entire fleet"""
-    raw_data = json.loads(gcp.get_secret_value(secret_name="vm-list"))
+    raw_data = gcp.get_firestore_value(value_name="vm-list",collection_name="vms")
     result_vms = []
 
     # Value foudn lookup value
     if raw_data:
-        for a_vm in raw_data:
+        for a_vm in raw_data["list"]:
             this_set = vm_info(
                 cluster_name=a_vm["cluster_name"],
                 vm_name=a_vm["vm_name"],

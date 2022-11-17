@@ -31,12 +31,15 @@ async def cluster_details(cluster_name: str, row_count: int = 100):
 @router.get("/urls/", response_model=abm_url_list)
 async def cluster_details(cluster_name: str):
     """ This function returns list of urls per cluster after looking up from GCP Secret"""
-    raw_data = gcp.get_secret_value(secret_name=cluster_name)
+    raw_data = gcp.get_firestore_value(value_name=cluster_name,collection_name="url_list")
+
+    # Return object
     result_url_list = abm_url_list()
 
-    # Value foudn lookup value
+    # Value found lookup value
     if raw_data:
-        url_list = json.loads(raw_data)
+        url_list = raw_data
+        print(url_list)
         result_url_list.grafana = url_list["grafana"]
         result_url_list.dashboard = url_list["dashboard"]
         result_url_list.pos = url_list["pos"]
@@ -67,7 +70,7 @@ async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
     save_value["dashboard"] =  url_list.dashboard
     save_value["grafana"] = url_list.grafana
 
-    result = gcp.set_secret_value(secret_name=cluster_name, secret_value=json.dumps(save_value))
+    result = gcp.set_firestore_value(value_name=cluster_name, value_to_save=save_value,collection_name="url_list")
 
     # Successfully written
     if not result: 
@@ -89,8 +92,14 @@ async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
 })
 async def set_vm_list(cluster_name: str, vm_info: List[vm_info]):
     """ This Function saves list of VMs from inside cluster"""
-    save_set = json.loads(gcp.get_secret_value(secret_name="vm-list"))
+    current_set = gcp.get_firestore_value(value_name="vm-list",collection_name="vms")
+    
+    #Check if empty list
+    if not current_set:
+        current_set = {}
+        current_set["list"] = []
 
+    # Add VM list
     for a_vm in vm_info:
         save_value = {}
         save_value["cluster_name"] = cluster_name
@@ -99,13 +108,13 @@ async def set_vm_list(cluster_name: str, vm_info: List[vm_info]):
         save_value["vm_status"] = a_vm.vm_status
         save_value["vm_image_name"] = a_vm.vm_image_name
         save_value["vm_parameter_set_name"] = a_vm.vm_parameter_set_name
-        save_set.append(save_value)
+        current_set["list"].append(save_value)
 
     # Clean Up list
-    while("" in save_set):
-        save_set.remove("")
+    while("" in current_set["list"]):
+        current_set["list"].remove("")
     
-    result = gcp.set_secret_value(secret_name="vm-list", secret_value=json.dumps(save_set))
+    result = gcp.set_firestore_value(value_name="vm-list", value_to_save=current_set,collection_name="vms")
 
     # Successfully written
     if not result: 

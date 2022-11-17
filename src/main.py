@@ -46,5 +46,8 @@ if __name__ == "__main__":
     #Build Zone List
     gcp.get_zones()
 
+    # Setup Firebase
+    helper.init_firebase()
+
     # Run Web App
     uvicorn.run(app, host="0.0.0.0", port=8080)
