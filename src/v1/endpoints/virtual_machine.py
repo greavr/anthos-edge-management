@@ -32,7 +32,7 @@ async def create_vm(vm_image_name: str, cluster_name: str, vm_parameterset_name:
     if create_vm:
         return {"status":"success"}
     else:
-        raise HTTPException(status_code=500, detail=f"Unable To Create VM")
+        raise HTTPException(status_code=500, detail=f"Unable toCreate VM")
 
 @router.post("/remove-vm", responses={
      200: {
@@ -52,7 +52,7 @@ async def remove_vm(vm_image_name: str, cluster_name: str):
     if git.delete_repo_file(file_to_remove):
         return {"status":"success"}
     else:
-        raise HTTPException(status_code=500, detail=f"Unable To Remove VM")
+        raise HTTPException(status_code=500, detail=f"Unable toRemove VM")
 
 @router.get("/image_list", response_model=List[vm_image])
 async def image_list():

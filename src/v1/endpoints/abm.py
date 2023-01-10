@@ -74,7 +74,7 @@ async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
 
     # Successfully written
     if not result: 
-        raise HTTPException(status_code=500, detail=f"Unable To Update Token")
+        raise HTTPException(status_code=500, detail=f"Unable toUpdate Token")
     else:
         return {"status":"success"}
 
@@ -118,7 +118,7 @@ async def set_vm_list(cluster_name: str, vm_info: List[vm_info]):
 
     # Successfully written
     if not result: 
-        raise HTTPException(status_code=500, detail=f"Unable To Update VM-list")
+        raise HTTPException(status_code=500, detail=f"Unable toUpdate VM-list")
     else:
         return {"status":"success"}
 

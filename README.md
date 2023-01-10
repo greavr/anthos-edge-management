@@ -33,6 +33,8 @@ The following environment variables can be set:
   - **COPY_FROM_REPO** - Source repo with sample workloasd [github.com/greavr/anthos-edge-workloads](https://github.com/greavr/anthos-edge-workloads)
   - **SAVE_PATH** - Local save path (has a default value)
   - **VM_IMAGE_BUCKET** - GCS Bucket which holds the KubeVirt VM Images
+  - **LATENCY_GRAPH_URL** - URL for the specific latency graph to display in iframe on syncronicity page
+  - **SYNC_LOOKER_URL** - URL for the Looker dashboard in the syncronicity page
 
 # Org Policy:
-- **iam.allowedPolicyMemberDomains** - Set To ***All***
+- **iam.allowedPolicyMemberDomains** - Set to***All***

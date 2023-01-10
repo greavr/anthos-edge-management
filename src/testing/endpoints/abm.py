@@ -42,7 +42,9 @@ async def list_of_abm_clusters():
                 "canary" : random.choice(["100","50","25","10"]),
                 "continent" : a_region.split("-")[0],
                 "loc" : a_region
-            }
+            },
+            sync_latency_setting=random.randint(0, 10)
+
         )
         canned_values.append(this_abm)
     

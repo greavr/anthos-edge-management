@@ -5,6 +5,8 @@ from core.settings import app_settings
 from core.gcp import gcp, acm, git
 import json
 
+from models.vm import vm_parameter_set, vm_image
+
 #APIRouter creates path operations for abm module
 router = APIRouter(
     prefix="/v1/settings",
@@ -47,14 +49,14 @@ async def get_setting_value(setting_name: str = None):
 
 @router.post("/git-token", responses={
     200: {
-        "description": "Update Git-Token",
+        "description": "Update Git-token",
         "content": {
             "application/json": {
                 "status": "success"
             }
         }
     },
-    500: {"description": "Unable To Update Token"}
+    500: {"description": "Unable to Update token"}
 })
 async def set_git_token(token_value: str):
     """ Updates the git token, and stores it in the secrets vault """
@@ -62,7 +64,7 @@ async def set_git_token(token_value: str):
 
     # Successfully written
     if not result: 
-        raise HTTPException(status_code=500, detail=f"Unable To Update Token")
+        raise HTTPException(status_code=500, detail=f"Unable to Update token")
     else:
         app_settings.git_token = token_value
         return {"status":"success"}
@@ -76,7 +78,7 @@ async def set_git_token(token_value: str):
             }
         }
     },
-    500: {"description": "Unable To Update repo Url"}
+    500: {"description": "Unable to Update repo Url"}
 })
 async def set_repo_url(repo_url: str):
     """ Updates the git token, and stores it in the secrets vault """
@@ -84,7 +86,7 @@ async def set_repo_url(repo_url: str):
 
     # Successfully written
     if not result: 
-        raise HTTPException(status_code=500, detail=f"Unable To Update Repo URL")
+        raise HTTPException(status_code=500, detail=f"Unable to Update Repo URL")
     else:
         app_settings.source_repo = repo_url
         return {"status":"success"}
@@ -146,7 +148,7 @@ async def show_monitoring_urls():
             }
         }
     },
-    500: {"description": "Unable To fleet-monitoring urls"}
+    500: {"description": "Unable to fleet-monitoring urls"}
 })
 async def set_fleet_Urls(fleet_urls: List[str]):
     """ Updates the git token, and stores it in the secrets vault """
@@ -156,7 +158,51 @@ async def set_fleet_Urls(fleet_urls: List[str]):
 
     # Successfully written
     if not result: 
-        raise HTTPException(status_code=500, detail=f"Unable To fleet-monitoring urls")
+        raise HTTPException(status_code=500, detail=f"Unable to fleet-monitoring urls")
     else:
         app_settings.fleet_monitoring_urls = fleet_urls
+        return {"status":"success"}
+
+@router.post("/set-latency-graph", responses={
+    200: {
+        "description": "Update latency graph url",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable to latency graph url"}
+})
+async def set_fleet_Urls(latency_graph_url: str):
+    """ Updates the git token, and stores it in the secrets vault """
+    result = gcp.set_secret_value(secret_name="latency_graph_url", secret_value=latency_graph_url)
+
+    # Successfully written
+    if not result: 
+        raise HTTPException(status_code=500, detail=f"Unable to latency graph url")
+    else:
+        app_settings.latency_graph_url = latency_graph_url
+        return {"status":"success"}
+
+@router.post("/set-looker-url", responses={
+    200: {
+        "description": "Update looker url",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable to update looker url"}
+})
+async def set_looker_url(looker_url: str):
+    """ Updates the git token, and stores it in the secrets vault """
+    result = gcp.set_secret_value(secret_name="syncronicity_looker_url", secret_value=looker_url)
+
+    # Successfully written
+    if not result: 
+        raise HTTPException(status_code=500, detail=f"Unable to update latency graph url")
+    else:
+        app_settings.syncronicity_looker_url = looker_url
         return {"status":"success"}

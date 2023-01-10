@@ -1,12 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from core.settings import app_settings
 from core.gcp import gcp, acm, git
+from models.vm import vm_parameter_set, vm_image, vm_info
 
 import logging
 
 from typing import List
 
-#APIRouter creates path operations for abm module
+#APIRouter creates path operations for settings module
 router = APIRouter(
     prefix="/testing/settings",
     tags=["testing"],
@@ -55,7 +56,7 @@ async def get_setting_value(setting_name: str = None):
             }
         }
     },
-    500: {"description": "Unable To Update Token"}
+    500: {"description": "Unable toUpdate Token"}
 })
 async def set_git_token(token_value: str):
     """ Updates the git token, and stores it in the secrets vault """
@@ -70,7 +71,7 @@ async def set_git_token(token_value: str):
             }
         }
     },
-    500: {"description": "Unable To Update repo Url"}
+    500: {"description": "Unable toUpdate repo Url"}
 })
 async def set_repo_url(repo_url: str):
     """ Updates the git token, and stores it in the secrets vault : TESTING - ALWAYS SUCCESS """
@@ -123,8 +124,38 @@ async def show_monitoring_urls():
             }
         }
     },
-    500: {"description": "Unable To fleet-monitoring urls"}
+    500: {"description": "Unable tofleet-monitoring urls"}
 })
 async def set_fleet_Urls(fleet_urls: List[str]):
-    """ Updates the git token, and stores it in the secrets vault  : TESTING - ALWAYS SUCCESS  """
+    """ Updates the fleet urls used on the homepage  : TESTING - ALWAYS SUCCESS  """
+    return {"status":"success"}
+
+@router.post("/set-latency-graph", responses={
+    200: {
+        "description": "Update latency graph url : TESTING - ALWAYS SUCCESS",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable to update latency graph url"}
+})
+async def set_fleet_Urls(latency_graph_url: str):
+    """ Updates the git token, and stores it in the secrets vault : TESTING - ALWAYS SUCCESS"""
+    return {"status":"success"}
+
+@router.post("/set-looker-url", responses={
+    200: {
+        "description": "Update looker url : TESTING - ALWAYS SUCCESS",
+        "content": {
+            "application/json": {
+                "status": "success"
+            }
+        }
+    },
+    500: {"description": "Unable to update looker url"}
+})
+async def set_looker_url(looker_url: str):
+    """ Update looker url  : TESTING - ALWAYS SUCCESS"""
     return {"status":"success"}

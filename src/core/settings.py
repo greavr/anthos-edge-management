@@ -29,14 +29,16 @@ class Settings(BaseSettings):
     node_list = {}
     zone_list = {}
     abm_list = {}
+    latency_graph_url: str = os.environ.get('LATENCY_GRAPH_URL','')
+    syncronicity_looker_url: str = os.environ.get('SYNC_LOOKER_URL','')
 
     def lookup_values(self):
-        """Function to lookup git values"""
+        """Function to lookup settings values from secret manager"""
         if self.git_token == "":
             from core.gcp import gcp
             self.git_token = gcp.get_secret_value(secret_name="git_token")
 
-            # COnfigure fleet URLS
+            # Configure fleet URLS
             url_list = json.loads(gcp.get_secret_value(secret_name="fleet_urls"))
             if url_list:
                 self.fleet_monitoring_urls = url_list
@@ -46,6 +48,15 @@ class Settings(BaseSettings):
         if self.source_repo == "":
             from core.gcp import gcp
             self.source_repo = gcp.get_secret_value(secret_name="source_repo")
+
+        if self.latency_graph_url == "":
+            from core.gcp import gcp
+            self.latency_graph_url = gcp.get_secret_value(secret_name="latency_graph_url")
+        
+        if self.syncronicity_looker_url == "":
+            from core.gcp import gcp
+            self.syncronicity_looker_url = gcp.get_secret_value(secret_name="syncronicity_looker_url")
+        
 
 app_settings = Settings()
 app_settings.lookup_values()

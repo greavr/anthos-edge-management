@@ -15,7 +15,8 @@ class Abm(BaseModel):
     lat_long: dict
     labels: Optional[dict]
     acm_status: Optional[str]
-    acm_update_time: Optional[str]
+    acm_update_time: Optional[datetime]
+    sync_latency_setting: Optional[int]
 
     def __repr__(self):
         return f"""name: {self.name}, 
@@ -29,4 +30,5 @@ class Abm(BaseModel):
                 lat_long: {self.lat_long},
                 labels: {self.labels},
                 acm_status: {self.acm_status},
-                acm_update_time: {self.acm_update_time}"""
+                acm_update_time: {self.acm_update_time},
+                sync_latency_setting: {self.sync_latency_setting}"""
