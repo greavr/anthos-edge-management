@@ -88,7 +88,8 @@ def build_abm_list():
                 lat_long = helper.lookup_location(gcp_region=this_location),
                 labels = response.labels,
                 acm_status=acm_status_code,
-                acm_update_time=acm_update_time
+                acm_update_time=acm_update_time,
+                sync_latency_setting=0
             )
 
             abm_list.append(thisAbm)

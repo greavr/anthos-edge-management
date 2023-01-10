@@ -36,7 +36,7 @@ async def list_of_abm_clusters():
             cluster_state="READY",
             update_time=datetime.now(),
             acm_status="Ready",
-            acm_update_time=datetime.now(),
+            acm_update_time=str(datetime.now()),
             lat_long = helper.lookup_location(gcp_region=a_region),
             labels={
                 "canary" : random.choice(["100","50","25","10"]),
