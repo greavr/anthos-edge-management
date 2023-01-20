@@ -35,6 +35,7 @@ The following environment variables can be set:
   - **VM_IMAGE_BUCKET** - GCS Bucket which holds the KubeVirt VM Images
   - **LATENCY_GRAPH_URL** - URL for the specific latency graph to display in iframe on syncronicity page
   - **SYNC_LOOKER_URL** - URL for the Looker dashboard in the syncronicity page
+  - **GRAFANA_URL** - OPTIONAL URL for Grafana Service
 
 # Org Policy:
 - **iam.allowedPolicyMemberDomains** - Set to***All***
