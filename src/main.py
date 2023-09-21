@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.helper import helper
-from v1.api import router as api_router
 from testing.api import router as testing_router
 
 from core.settings import app_settings
@@ -22,7 +21,6 @@ app.add_middleware(
 )
 
 # Include Routes
-app.include_router(api_router)
 app.include_router(testing_router)
 
 @app.get("/")
@@ -43,11 +41,14 @@ if __name__ == "__main__":
     # Build Policy List
     helper.build_policy_list()
 
-    #Build Zone List
-    gcp.get_zones()
+    # Build fake running vm list
+    app_settings.build_running_vm_list()
 
-    # Setup Firebase
-    helper.init_firebase()
+    # #Build Zone List
+    # gcp.get_zones()
+
+    # # Setup Firebase
+    # helper.init_firebase()
 
     # Run Web App
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=8081)

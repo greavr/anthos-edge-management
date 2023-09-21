@@ -6,8 +6,8 @@ from core.settings import app_settings
 
 #APIRouter creates path operations for abm module
 router = APIRouter(
-    prefix="/testing/acm",
-    tags=["testing"],
+    prefix="/v1/acm",
+    tags=["acm"],
     responses={404: {"description": "Not found"}},
 )
 

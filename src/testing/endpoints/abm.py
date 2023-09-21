@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from typing import List, Dict
 
 from core.helper import helper
+from core.settings import app_settings
 
 from models.abm import Abm
 from models.logs import abm_log_item
@@ -13,11 +14,12 @@ from models.vm import vm_info
 
 #APIRouter creates path operations for abm module
 router = APIRouter(
-    prefix="/testing/abm",
-    tags=["testing"],
+    prefix="/v1/abm",
+    tags=["abm"],
     responses={404: {"description": "Not found"}},
 )
 
+@router.get("/complete-node-list", response_model=List[Abm])
 @router.get("/", response_model=List[Abm])
 async def list_of_abm_clusters():
     """ Function returns list of Anthos Baremetal Clusters in the project: TESTING - ALWAYS SUCCESS """  
@@ -69,8 +71,8 @@ async def cluster_details(cluster_name: str, row_count: int = 100):
 async def testing_cluster_details(cluster_name: str):
     canned_urls = abm_url_list(
         grafana = "http://34.82.239.219:3000/",
-        dashboard = "http://34.82.239.219:3000/",
-        pos = "http://35.193.141.59:8080/rotf"  )
+        dashboard = "http://34.82.239.219:3001/",
+        pos = random.choice(app_settings.workload_url) )
     return canned_urls
 
 @router.get("/nodes/", response_model=List[AbmNode])
@@ -78,7 +80,7 @@ async def node_list(cluster_name: str, location:str):
     """ Return details of nodes in the cluster : TESTING - ALWAYS SUCCESS"""  
     canned_values = [
         {"name": "abm-master-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.9","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101184", "status": "RUNNING"},
-        {"name": "abm-worker-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.11","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101379", "status": "STOPPED"},
+        {"name": "abm-worker-northamerica-northeast1-0","zone": "northamerica-northeast1-a","ip": "10.0.8.11","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101379", "status": "RUNNING"},
         {"name": "abm-worker-northamerica-northeast1-1","zone": "northamerica-northeast1-a","ip": "10.0.8.10","instance_type": "n2-standard-2","disk_size_gb": 160,"update_time": "2022-09-26T21:45:51.101453", "status": "RUNNING"}
     ]
     return canned_values
@@ -113,8 +115,3 @@ async def save_abm_urls(cluster_name: str, url_list: abm_url_list):
 async def set_services(cluster_name: str, vm_info: List[vm_info]):
     """ This Function saves list of VMs from inside cluster : TESTING - ALWAYS SUCCESS"""
     return {"status":"success"}
-
-@router.get("/complete-node-list")
-async def list_all_nodes():
-    """ Function returns list of Anthos Baremetal Clusters in the project"""
-    return {}

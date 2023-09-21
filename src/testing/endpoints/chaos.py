@@ -3,8 +3,8 @@ from typing import List
 
 #APIRouter creates path operations for chaos module
 router = APIRouter(
-    prefix="/testing/chaos",
-    tags=["testing"],
+    prefix="/v1/chaos",
+    tags=["chaos"],
     responses={404: {"description": "Not found"}},
 )
 

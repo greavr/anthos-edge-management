@@ -1,13 +1,13 @@
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/edge-demo', '.']
+  args: ['build', '-t', 'us.gcr.io/$PROJECT_ID/edge-demo-offline', '.']
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/edge-demo']
-# Deploy container image to Cloud Run
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
-  args: ['run', 'deploy', 'edge-demo', '--image', 'gcr.io/$PROJECT_ID/edge-demo', '--region', 'us-west1', '--allow-unauthenticated', '--timeout','50m', '--no-cpu-throttling', '--memory', '2Gi', '--cpu', '4', '--update-env-vars', 'GCP_PROJECT=$PROJECT_ID,VM_IMAGE_BUCKET=https://storage.googleapis.com/rgreaves-gke-chaos-kubevirt']
-images:
-- gcr.io/$PROJECT_ID/edge-demo
+  args: ['push', 'us.gcr.io/$PROJECT_ID/edge-demo-offline']
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'edge-demo-offline', '--image', 'us.gcr.io/$PROJECT_ID/edge-demo-offline', '--region', 'us-west1', '--allow-unauthenticated', '--timeout','50m', '--no-cpu-throttling', '--memory', '2Gi', '--cpu', '4', '--update-env-vars', 'GCP_PROJECT=$PROJECT_ID,VM_IMAGE_BUCKET=https://storage.googleapis.com/rgreaves-gke-chaos-kubevirt']
+  images:
+  - us.gcr.io/$PROJECT_ID/edge-demo-offline

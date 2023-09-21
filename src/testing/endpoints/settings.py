@@ -9,8 +9,8 @@ from typing import List
 
 #APIRouter creates path operations for settings module
 router = APIRouter(
-    prefix="/testing/settings",
-    tags=["testing"],
+    prefix="/v1/settings",
+    tags=["settings"],
     responses={404: {"description": "Not found"}},
 )
 
